@@ -52,6 +52,24 @@ function PainelFinanceiro() {
         <TextField label="Subconta VanPro" value={form.subconta} onChange={set("subconta")} />
       </PainelCard>
 
+      <p className="mt-6 mb-3 text-xs font-bold tracking-wide text-muted-foreground uppercase">
+        Integração Unicopag
+      </p>
+      <PainelCard>
+        <TextField
+          label="ID do recebedor na Unicopag"
+          value={form.unicopagClienteId}
+          onChange={set("unicopagClienteId")}
+          placeholder="Ex.: rcv_123456"
+        />
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          A <strong>API Key da Unicopag</strong> não fica salva aqui por segurança: ela é guardada
+          criptografada no servidor e usada apenas para criar as cobranças PIX, cartão e boleto do
+          checkout.
+        </p>
+      </PainelCard>
+
+
       <SaveButton
         salvo={salvo}
         onClick={() => {
