@@ -37,6 +37,7 @@ export type PainelConfig = {
     documento: string;
     chavePix: string;
     subconta: string;
+    unicopagClienteId: string;
   };
   contatos: {
     whatsapp: string;
