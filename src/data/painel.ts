@@ -37,6 +37,7 @@ export type PainelConfig = {
     documento: string;
     chavePix: string;
     subconta: string;
+    unicopagClienteId: string;
   };
   contatos: {
     whatsapp: string;
@@ -80,6 +81,7 @@ export const painelPadrao: PainelConfig = {
     documento: "12.345.678/0001-90",
     chavePix: "reservas@atlantica.com.br",
     subconta: "VP-SUB-1042",
+    unicopagClienteId: "",
   },
   contatos: {
     whatsapp: "5571988887777",
