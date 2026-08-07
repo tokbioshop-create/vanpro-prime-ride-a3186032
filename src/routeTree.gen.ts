@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as EmpresasRouteImport } from './routes/empresas'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as HomeRouteImport } from './routes/home'
@@ -50,6 +51,11 @@ const AjudaRoute = AjudaRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmpresasRoute = EmpresasRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
+  '/carrinho': typeof CarrinhoRoute
   '/empresas': typeof EmpresasRoute
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
+  '/carrinho': typeof CarrinhoRoute
   '/empresas': typeof EmpresasRoute
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
+  '/carrinho': typeof CarrinhoRoute
   '/empresas': typeof EmpresasRoute
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
+    | '/carrinho'
     | '/empresas'
     | '/historico'
     | '/home'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
+    | '/carrinho'
     | '/empresas'
     | '/historico'
     | '/home'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
+    | '/carrinho'
     | '/empresas'
     | '/historico'
     | '/home'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   AgendarRoute: typeof AgendarRoute
   AjudaRoute: typeof AjudaRoute
   CadastroRoute: typeof CadastroRoute
+  CarrinhoRoute: typeof CarrinhoRoute
   EmpresasRoute: typeof EmpresasRoute
   HistoricoRoute: typeof HistoricoRoute
   HomeRoute: typeof HomeRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/empresas': {
@@ -480,6 +500,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgendarRoute: AgendarRoute,
   AjudaRoute: AjudaRoute,
   CadastroRoute: CadastroRoute,
+  CarrinhoRoute: CarrinhoRoute,
   EmpresasRoute: EmpresasRoute,
   HistoricoRoute: HistoricoRoute,
   HomeRoute: HomeRoute,
@@ -502,13 +523,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
