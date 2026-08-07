@@ -42,7 +42,7 @@ export function BottomNav() {
           <Tab to="/home" icon={HomeIcon} label="Início" active={is("/home")} />
           <Tab to="/viagens" icon={CalendarDays} label="Reservas" active={is("/viagens")} />
           <Link
-            to="/pagamentos"
+            to="/carrinho"
             className="press bg-brand -mt-6 relative flex size-14 flex-col items-center justify-center rounded-full text-primary-foreground shadow-[var(--shadow-brand)]"
             aria-label={`Carrinho de agendamentos (${itens.length})`}
           >
