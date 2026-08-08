@@ -54,7 +54,7 @@ function Home() {
         />
 
         {/* painel de dados dinâmicos sobre a área escura do protótipo */}
-        <div className="absolute inset-x-0 top-[15%] bottom-[42%] flex flex-col justify-center bg-[linear-gradient(90deg,oklch(0.12_0.06_268)_0%,oklch(0.12_0.06_268/0.96)_46%,oklch(0.12_0.06_268/0)_78%)] px-5">
+        <div className="absolute inset-x-0 top-[15%] bottom-[42%] flex flex-col justify-center bg-[linear-gradient(90deg,oklch(0.12_0.06_268)_0%,oklch(0.12_0.06_268/0.97)_58%,oklch(0.12_0.06_268/0)_86%)] px-5">
           <h1 className="max-w-[62%] text-[26px] leading-[1.05] font-extrabold text-[oklch(0.99_0_0)]">
             {config.empresa.nome}
           </h1>
