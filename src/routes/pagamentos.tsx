@@ -94,7 +94,7 @@ function Pagamentos() {
         />
 
         {/* total real */}
-        <Campo left={5.5} top={32.6} width={53} height={6.4} bg={BRANCO}>
+        <Campo left={5.5} top={32.4} width={53} height={7} bg={BRANCO}>
           <span className="flex items-baseline gap-[1.5cqw]">
             <span className="font-bold" style={{ fontSize: "5.2cqw", color: "#14152f" }}>R$</span>
             <span className="font-extrabold" style={{ fontSize: "8.4cqw", color: "#1a2cf0" }}>
@@ -104,21 +104,21 @@ function Pagamentos() {
         </Campo>
 
         {/* trajeto, horário, assento e passageiros reais */}
-        <Campo left={11.5} top={42.1} width={27} height={4.2} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "2.9cqw", color: "#14152f", lineHeight: 1.35 }}>
+        <Campo left={11.5} top={41.9} width={34} height={4.4} bg={BRANCO}>
+          <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
             {r.origem}
           </span>
-          <span className="font-semibold" style={{ fontSize: "2.9cqw", color: "#14152f", lineHeight: 1.35 }}>
+          <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
             → {r.destino}
           </span>
         </Campo>
-        <Campo left={44.3} top={42.1} width={15} height={2.1} bg={BRANCO}>
+        <Campo left={45.5} top={41.9} width={14} height={2.2} bg={BRANCO}>
           <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.horario}</span>
         </Campo>
         <Campo left={64} top={43.9} width={12} height={2.1} bg={BRANCO}>
           <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.assentos}</span>
         </Campo>
-        <Campo left={85} top={42.1} width={10} height={2.1} bg={BRANCO}>
+        <Campo left={84} top={41.9} width={12} height={2.2} bg={BRANCO}>
           <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.passageiros}</span>
         </Campo>
 
