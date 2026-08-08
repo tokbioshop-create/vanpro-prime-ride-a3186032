@@ -101,7 +101,7 @@ function Carrinho() {
         <Campo left={18.6} top={46} width={55} height={2.8} bg={BRANCO}>
           <span style={{ fontSize: "3.4cqw", color: "#5b6070" }}>{r.data}</span>
         </Campo>
-        <Campo left={18.6} top={52.8} width={60} height={2.8} bg={BRANCO}>
+        <Campo left={18.6} top={54.1} width={60} height={3.2} bg={BRANCO}>
           <span style={{ fontSize: "3.4cqw", color: "#5b6070" }}>{r.observacao}</span>
         </Campo>
 
