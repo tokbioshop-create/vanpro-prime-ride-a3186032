@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { brl } from "@/data/vanpro";
 import { usePainel } from "@/data/painel";
+import { Campo } from "@/components/Campo";
+import { useReserva } from "@/data/reserva";
 import { criarCobranca } from "@/lib/unicopag.functions";
 import checkoutHero from "@/assets/checkout-hero.png.asset.json";
 
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/pagamentos")({
   component: Pagamentos,
 });
 
-const valor = 89;
+const BRANCO = "#fefefe";
 
 type Metodo = "pix" | "credito" | "debito";
 
@@ -41,6 +43,8 @@ const areas: Record<Metodo, { top: number; height: number }> = {
 function Pagamentos() {
   const navigate = useNavigate();
   const { config } = usePainel();
+  const r = useReserva();
+  const valor = r.total;
   const [metodo, setMetodo] = useState<Metodo>("pix");
   const [pago, setPago] = useState(false);
   const [carregando, setCarregando] = useState(false);
@@ -56,7 +60,7 @@ function Pagamentos() {
         data: {
           valor,
           metodo: metodo === "pix" ? "pix" : "cartao",
-          descricao: "Reserva VanPro · Salvador → Praia do Forte",
+          descricao: `Reserva VanPro · ${r.origem} → ${r.destino}`,
           recebedor: {
             chavePix: config.financeiro.chavePix,
             subconta: config.financeiro.subconta,
@@ -82,12 +86,41 @@ function Pagamentos() {
 
   return (
     <div className="min-h-screen bg-[oklch(0.14_0.06_268)]">
-      <div className="relative mx-auto w-full max-w-md">
+      <div className="relative mx-auto w-full max-w-md" style={{ containerType: "inline-size" }}>
         <img
           src={checkoutHero.url}
-          alt="Checkout VanPro: total de R$ 89,00, trajeto Salvador para Praia do Forte, formas de pagamento e botão finalizar pagamento"
+          alt={`Checkout VanPro: total de ${brl(valor)}, trajeto ${r.origem} para ${r.destino}, formas de pagamento e botão finalizar pagamento`}
           className="block w-full select-none"
         />
+
+        {/* total real */}
+        <Campo left={6} top={33.2} width={52} height={5.6} bg={BRANCO}>
+          <span className="flex items-baseline gap-[1.5cqw]">
+            <span className="font-bold" style={{ fontSize: "5.2cqw", color: "#14152f" }}>R$</span>
+            <span className="font-extrabold" style={{ fontSize: "8.4cqw", color: "#1a2cf0" }}>
+              {brl(valor).replace("R$", "").trim()}
+            </span>
+          </span>
+        </Campo>
+
+        {/* trajeto, horário, assento e passageiros reais */}
+        <Campo left={12} top={41.7} width={22} height={4.3} bg={BRANCO}>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f", lineHeight: 1.3 }}>
+            {r.origem}
+          </span>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f", lineHeight: 1.3 }}>
+            → {r.destino}
+          </span>
+        </Campo>
+        <Campo left={45.5} top={41.7} width={13} height={2} bg={BRANCO}>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.horario}</span>
+        </Campo>
+        <Campo left={64.5} top={43.8} width={11} height={2} bg={BRANCO}>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.assentos}</span>
+        </Campo>
+        <Campo left={86.5} top={41.7} width={7} height={2} bg={BRANCO}>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.passageiros}</span>
+        </Campo>
 
         {/* voltar */}
         <button
