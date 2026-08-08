@@ -1,5 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import carrinhoHero from "@/assets/carrinho-hero.jpg.asset.json";
+import { Campo } from "@/components/Campo";
+import { useReserva } from "@/data/reserva";
+import { brl } from "@/data/vanpro";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
@@ -17,6 +20,9 @@ export const Route = createFileRoute("/carrinho")({
   }),
   component: Carrinho,
 });
+
+const BRANCO = "#f8f8f8";
+const NAVY = "#020c42";
 
 /** Áreas clicáveis em % sobre o protótipo (720 x 1278). */
 function Hotspot({
@@ -47,15 +53,78 @@ function Hotspot({
 
 function Carrinho() {
   const navigate = useNavigate();
+  const r = useReserva();
 
   return (
     <div className="min-h-screen bg-[oklch(0.14_0.06_268)]">
-      <div className="relative mx-auto w-full max-w-md">
+      <div
+        className="relative mx-auto w-full max-w-md"
+        style={{ containerType: "inline-size" }}
+      >
         <img
           src={carrinhoHero.url}
-          alt="Seu carrinho VanPro: resumo da viagem Salvador para Praia do Forte, valor total e botão confirmar e seguir para pagamento"
+          alt={`Seu carrinho VanPro: viagem de ${r.origem} para ${r.destino}, total ${brl(r.total)}`}
           className="block w-full select-none"
         />
+
+        {/* trajeto (card escuro) */}
+        <Campo left={47.5} top={14.4} width={49} height={7.6} bg={NAVY}>
+          <span
+            className="font-bold text-white"
+            style={{ fontSize: "4.2cqw", lineHeight: 1.25 }}
+          >
+            {r.origem}
+          </span>
+          <span
+            className="font-bold text-white"
+            style={{ fontSize: "4.2cqw", lineHeight: 1.25 }}
+          >
+            → {r.destino}
+          </span>
+        </Campo>
+
+        {/* horário / assento / passageiros */}
+        <Campo left={48.6} top={22.6} width={11} height={2.5} bg={NAVY}>
+          <span className="font-bold text-white" style={{ fontSize: "3.3cqw" }}>{r.horario}</span>
+        </Campo>
+        <Campo left={66} top={22.6} width={9} height={2.5} bg={NAVY}>
+          <span className="font-bold text-white" style={{ fontSize: "3.3cqw" }}>{r.assentos}</span>
+        </Campo>
+        <Campo left={83.4} top={22.6} width={7} height={2.5} bg={NAVY}>
+          <span className="font-bold text-white" style={{ fontSize: "3.3cqw" }}>{r.passageiros}</span>
+        </Campo>
+
+        {/* resumo da viagem */}
+        <Campo left={18.6} top={39.2} width={55} height={2.8} bg={BRANCO}>
+          <span style={{ fontSize: "3.4cqw", color: "#5b6070" }}>{r.nome}</span>
+        </Campo>
+        <Campo left={18.6} top={46} width={55} height={2.8} bg={BRANCO}>
+          <span style={{ fontSize: "3.4cqw", color: "#5b6070" }}>{r.data}</span>
+        </Campo>
+        <Campo left={18.6} top={54.6} width={62} height={3.4} bg={BRANCO}>
+          <span style={{ fontSize: "3.4cqw", color: "#5b6070" }}>{r.observacao}</span>
+        </Campo>
+
+        {/* valores */}
+        <Campo left={6.5} top={66.2} width={45} height={2.9} bg={BRANCO}>
+          <span style={{ fontSize: "3.5cqw", color: "#2b2f3d" }}>{r.veiculo}</span>
+        </Campo>
+        <Campo left={58} top={66.2} width={35} height={2.9} bg={BRANCO} align="right">
+          <span className="font-semibold" style={{ fontSize: "3.5cqw", color: "#14152f" }}>
+            {brl(r.subtotal)}
+          </span>
+        </Campo>
+        <Campo left={58} top={71.6} width={35} height={2.9} bg={BRANCO} align="right">
+          <span className="font-semibold" style={{ fontSize: "3.5cqw", color: "#14152f" }}>
+            {brl(r.taxa)}
+          </span>
+        </Campo>
+        <Campo left={54} top={75.9} width={39} height={4.2} bg={BRANCO} align="right">
+          <span className="font-extrabold" style={{ fontSize: "5.4cqw", color: "#0b2be3" }}>
+            {brl(r.total)}
+          </span>
+        </Campo>
+
         <Hotspot
           label="Alterar viagem"
           left={74}
