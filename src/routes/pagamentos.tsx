@@ -43,8 +43,8 @@ const areas: Record<Metodo, { top: number; height: number }> = {
 function Pagamentos() {
   const navigate = useNavigate();
   const { config } = usePainel();
-  const r = useReserva();
-  const valor = r.total;
+  const reserva = useReserva();
+  const valor = reserva.total;
   const [metodo, setMetodo] = useState<Metodo>("pix");
   const [pago, setPago] = useState(false);
   const [carregando, setCarregando] = useState(false);
@@ -60,7 +60,7 @@ function Pagamentos() {
         data: {
           valor,
           metodo: metodo === "pix" ? "pix" : "cartao",
-          descricao: `Reserva VanPro · ${r.origem} → ${r.destino}`,
+          descricao: `Reserva VanPro · ${reserva.origem} → ${reserva.destino}`,
           recebedor: {
             chavePix: config.financeiro.chavePix,
             subconta: config.financeiro.subconta,
@@ -89,7 +89,7 @@ function Pagamentos() {
       <div className="relative mx-auto w-full max-w-md" style={{ containerType: "inline-size" }}>
         <img
           src={checkoutHero.url}
-          alt={`Checkout VanPro: total de ${brl(valor)}, trajeto ${r.origem} para ${r.destino}, formas de pagamento e botão finalizar pagamento`}
+          alt={`Checkout VanPro: total de ${brl(valor)}, trajeto ${reserva.origem} para ${reserva.destino}, formas de pagamento e botão finalizar pagamento`}
           className="block w-full select-none"
         />
 
@@ -106,20 +106,20 @@ function Pagamentos() {
         {/* trajeto, horário, assento e passageiros reais */}
         <Campo left={11.5} top={41.9} width={34} height={4.4} bg={BRANCO}>
           <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
-            {r.origem}
+            {reserva.origem}
           </span>
           <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
-            → {r.destino}
+            → {reserva.destino}
           </span>
         </Campo>
         <Campo left={45.5} top={41.9} width={14} height={2.2} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.horario}</span>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.horario}</span>
         </Campo>
         <Campo left={64} top={43.9} width={12} height={2.1} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.assentos}</span>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.assentos}</span>
         </Campo>
         <Campo left={84} top={41.9} width={12} height={2.2} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{r.passageiros}</span>
+          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.passageiros}</span>
         </Campo>
 
         {/* voltar */}
