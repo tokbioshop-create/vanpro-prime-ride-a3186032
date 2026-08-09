@@ -309,7 +309,7 @@ function Pagamentos() {
         )}
 
 
-        {(erro || pix || pago) && (
+        {!formCartao && (erro || pix || pago) && (
           <div className="absolute inset-0 flex items-end justify-center bg-[oklch(0.14_0.06_268/0.6)] p-4">
             <div className="card-elevated w-full p-5 text-center">
               {pago && (
