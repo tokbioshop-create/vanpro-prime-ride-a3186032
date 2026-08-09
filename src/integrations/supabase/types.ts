@@ -87,11 +87,15 @@ export type Database = {
           compartilhando: boolean
           criada_em: string
           destino: string
+          destino_lat: number | null
+          destino_lng: number | null
           empresa: string
           encerrada: boolean
           id: string
           motorista: string
           origem: string
+          origem_lat: number | null
+          origem_lng: number | null
           titulo: string
         }
         Insert: {
@@ -99,11 +103,15 @@ export type Database = {
           compartilhando?: boolean
           criada_em?: string
           destino?: string
+          destino_lat?: number | null
+          destino_lng?: number | null
           empresa?: string
           encerrada?: boolean
           id?: string
           motorista?: string
           origem?: string
+          origem_lat?: number | null
+          origem_lng?: number | null
           titulo: string
         }
         Update: {
@@ -111,11 +119,15 @@ export type Database = {
           compartilhando?: boolean
           criada_em?: string
           destino?: string
+          destino_lat?: number | null
+          destino_lng?: number | null
           empresa?: string
           encerrada?: boolean
           id?: string
           motorista?: string
           origem?: string
+          origem_lat?: number | null
+          origem_lng?: number | null
           titulo?: string
         }
         Relationships: []
