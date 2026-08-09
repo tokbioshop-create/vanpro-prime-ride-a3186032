@@ -37,6 +37,15 @@
   --color-surface-2: var(--surface-2);
   --color-gold: var(--gold);
   --color-navy: var(--navy);
+  --color-track-bg: var(--track-bg);
+  --color-track-surface: var(--track-surface);
+  --color-track-surface-2: var(--track-surface-2);
+  --color-track-border: var(--track-border);
+  --color-track-foreground: var(--track-foreground);
+  --color-track-muted: var(--track-muted);
+  --color-track-accent: var(--track-accent);
+  --color-track-gold: var(--track-gold);
+
   --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
