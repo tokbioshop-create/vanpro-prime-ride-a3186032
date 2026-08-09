@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
+
 import carrinhoHero from "@/assets/carrinho-hero.jpg.asset.json";
 import { Campo } from "@/components/Campo";
 import { useReserva } from "@/data/reserva";
@@ -61,11 +63,21 @@ function Carrinho() {
         className="relative mx-auto w-full max-w-md"
         style={{ containerType: "inline-size" }}
       >
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/agendar" })}
+          aria-label="Voltar"
+          className="press absolute top-3 left-3 z-10 flex size-10 items-center justify-center rounded-full bg-[oklch(1_0_0/0.16)] text-primary-foreground backdrop-blur-sm ring-1 ring-[oklch(1_0_0/0.25)]"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+
         <img
           src={carrinhoHero.url}
           alt={`Seu carrinho VanPro: viagem de ${r.origem} para ${r.destino}, total ${brl(r.total)}`}
           className="block w-full select-none"
         />
+
 
         {/* trajeto (card escuro) */}
         <Campo left={47.5} top={14.4} width={49} height={7.6} bg={NAVY}>

@@ -104,8 +104,7 @@ function Seat({
 
 function Agendar() {
   const { config } = usePainel();
-  const { itens, adicionar, remover } = useCarrinho();
-  const [assentos, setAssentos] = useState<string[]>([]);
+  const { itens, adicionar, remover, limpar } = useCarrinho();
   const [tipo, setTipo] = useState<VeiculoTipo>("van");
   const [horarioIdx, setHorarioIdx] = useState(0);
 
@@ -119,14 +118,16 @@ function Agendar() {
 
   const itemId = (s: string) => `${veiculo.id}-${horaLabel}-${s}`;
 
+  // seleção espelha o carrinho: o que está no carrinho está selecionado no mapa
+  const prefixo = `${veiculo.id}-${horaLabel}-`;
+  const assentos = itens.filter((i) => i.id.startsWith(prefixo)).map((i) => i.assento);
+
   const toggle = (s: string) => {
     if (veiculo.ocupados.includes(s)) return;
     if (assentos.includes(s)) {
-      setAssentos((p) => p.filter((x) => x !== s));
       remover(itemId(s));
       return;
     }
-    setAssentos((p) => [...p, s]);
     adicionar({
       id: itemId(s),
       veiculo: veiculo.label,
@@ -144,10 +145,8 @@ function Agendar() {
       .flatMap((f) => veiculo.colunas.map((c) => f + c))
       .find((id) => !veiculo.ocupados.includes(id) && !assentos.includes(id));
 
-  const limparSelecao = () => {
-    assentos.forEach((s) => remover(itemId(s)));
-    setAssentos([]);
-  };
+  const limparSelecao = () => limpar();
+
 
 
   return (
@@ -211,29 +210,35 @@ function Agendar() {
                 type="button"
                 onClick={() => {
                   const ultimo = assentos[assentos.length - 1];
-                  if (ultimo) toggle(ultimo);
+                  if (ultimo) {
+                    toggle(ultimo);
+                    return;
+                  }
+                  const outro = itens[itens.length - 1];
+                  if (outro) remover(outro.id);
                 }}
                 className="press flex size-9 items-center justify-center rounded-xl bg-card text-lg leading-none shadow-[var(--shadow-soft)]"
-                aria-label="Remover assento"
+                aria-label="Remover do carrinho"
               >
                 −
               </button>
-              <span className="w-5 text-center text-lg font-extrabold">{assentos.length}</span>
+              <span className="w-5 text-center text-lg font-extrabold">{itens.length}</span>
               <button
                 type="button"
                 onClick={() => {
                   const livre = proximoLivre();
                   if (livre) toggle(livre);
                 }}
-                aria-label="Adicionar assento"
+                aria-label="Adicionar ao carrinho"
                 className="press bg-gold text-navy flex size-9 items-center justify-center rounded-xl shadow-[var(--shadow-gold)]"
               >
                 <Plus className="size-4.5" strokeWidth={3} />
               </button>
             </div>
             <span className="text-[10px] text-muted-foreground">
-              {assentos.length === 1 ? "1 assento" : `${assentos.length} assentos`}
+              {itens.length === 1 ? "1 no carrinho" : `${itens.length} no carrinho`}
             </span>
+
           </div>
         </section>
 
@@ -246,10 +251,8 @@ function Agendar() {
               <button
                 key={v.id}
                 type="button"
-                onClick={() => {
-                  setTipo(v.id);
-                  setAssentos([]);
-                }}
+                onClick={() => setTipo(v.id)}
+
                 className={`press flex items-center justify-center gap-1.5 rounded-full px-2 py-3 text-[10px] font-extrabold whitespace-nowrap transition ${
                   veiculo.id === v.id
                     ? "bg-brand text-primary-foreground shadow-[var(--shadow-brand)]"
@@ -387,7 +390,7 @@ function Agendar() {
                 : "O carrinho fica na barra inferior"}
             </span>
           </span>
-          {assentos.length > 0 && (
+          {itens.length > 0 && (
             <button
               type="button"
               onClick={limparSelecao}

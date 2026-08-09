@@ -23,16 +23,16 @@ export function FeedbackEmpresa() {
   }
 
   return (
-    <section className="bg-navy mt-4 space-y-3 rounded-3xl p-4 shadow-[var(--shadow-brand-soft)] ring-1 ring-[oklch(1_0_0/0.12)]">
+    <section className="mt-4 space-y-3 rounded-3xl bg-card p-4 shadow-[0_24px_50px_-18px_oklch(0.24_0.13_268/0.45)] ring-1 ring-border">
       <div>
-        <h2 className="text-sm font-extrabold text-[oklch(0.99_0_0)]">Feedback para o empresário</h2>
-        <p className="text-[11px] text-[oklch(0.84_0.02_265)]">
+        <h2 className="text-sm font-extrabold text-foreground">Feedback para o empresário</h2>
+        <p className="text-[11px] text-muted-foreground">
           Conte como foi sua experiência com a empresa de transporte.
         </p>
       </div>
 
       <input
-        className="w-full rounded-xl bg-[oklch(1_0_0/0.08)] px-4 py-3 text-sm text-[oklch(0.99_0_0)] placeholder:text-[oklch(0.78_0.02_265)] outline-none ring-1 ring-[oklch(1_0_0/0.12)] focus:ring-2 focus:ring-[var(--gold)]"
+        className="w-full rounded-xl bg-surface-2 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary/40"
         placeholder="Seu nome"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
@@ -40,7 +40,7 @@ export function FeedbackEmpresa() {
       />
       <textarea
         rows={3}
-        className="w-full resize-none rounded-xl bg-[oklch(1_0_0/0.08)] px-4 py-3 text-sm leading-relaxed text-[oklch(0.99_0_0)] placeholder:text-[oklch(0.78_0.02_265)] outline-none ring-1 ring-[oklch(1_0_0/0.12)] focus:ring-2 focus:ring-[var(--gold)]"
+        className="w-full resize-none rounded-xl bg-surface-2 px-4 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-primary/40"
         placeholder="Sua mensagem"
         value={mensagem}
         onChange={(e) => setMensagem(e.target.value)}
@@ -51,12 +51,12 @@ export function FeedbackEmpresa() {
       <button
         type="button"
         onClick={submit}
-        className="press bg-gold text-navy flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-extrabold shadow-[var(--shadow-gold)]"
+        className="press bg-brand text-primary-foreground flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-extrabold shadow-[var(--shadow-brand)]"
       >
         <Send className="size-4" /> Enviar feedback
       </button>
 
-      <p className="pt-1 text-[11px] text-[oklch(0.78_0.02_265)]">
+      <p className="pt-1 text-[11px] text-muted-foreground">
         Seu feedback aparece imediatamente no carrossel acima.
       </p>
 
