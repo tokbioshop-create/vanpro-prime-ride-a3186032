@@ -182,7 +182,7 @@ function Pagamentos() {
             type="button"
             aria-label={`Selecionar ${id}`}
             aria-pressed={metodo === id}
-            onClick={() => setMetodo(id)}
+            onClick={() => selecionar(id)}
             className={`press absolute rounded-2xl transition ${
               metodo === id ? "ring-2 ring-primary" : ""
             }`}
