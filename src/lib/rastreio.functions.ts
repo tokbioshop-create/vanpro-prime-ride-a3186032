@@ -120,6 +120,18 @@ export const criarViagemRastreada = createServerFn({ method: "POST" })
     return { id: viagem.id, localizado: Boolean(origemCoord && destinoCoord) };
   });
 
+/** Localiza um endereço no mapa (usado no painel para marcar origem/destino em tempo real). */
+export const localizarEndereco = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z.object({ endereco: z.string().trim().max(160) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    if (!data.endereco) return { lat: null, lng: null };
+    const { geocodificar } = await import("./geocode.server");
+    const coord = await geocodificar(data.endereco);
+    return { lat: coord?.lat ?? null, lng: coord?.lng ?? null };
+  });
+
 
 export const definirCompartilhamento = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => compartilharSchema.parse(input))

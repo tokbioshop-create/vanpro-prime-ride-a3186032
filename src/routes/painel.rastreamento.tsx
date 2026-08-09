@@ -4,14 +4,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { Copy, Plus, Radio, Square } from "lucide-react";
 import { AppScreen } from "@/components/AppScreen";
 import { PainelCard, TextField } from "@/components/PainelForm";
+import { MapaViagemLive } from "@/components/MapaViagemLive";
 import { usePainel } from "@/data/painel";
 import {
   criarViagemRastreada,
   definirCompartilhamento,
   encerrarViagemRastreada,
   listarViagensPainel,
+  localizarEndereco,
   type ViagemPainel,
 } from "@/lib/rastreio.functions";
+
 
 export const Route = createFileRoute("/painel/rastreamento")({
   head: () => ({
@@ -38,6 +41,7 @@ function PainelRastreamento() {
   const criar = useServerFn(criarViagemRastreada);
   const compartilhar = useServerFn(definirCompartilhamento);
   const encerrar = useServerFn(encerrarViagemRastreada);
+  const localizar = useServerFn(localizarEndereco);
 
   const [viagens, setViagens] = useState<ViagemPainel[]>([]);
   const [titulo, setTitulo] = useState("");
@@ -45,6 +49,9 @@ function PainelRastreamento() {
   const [destino, setDestino] = useState("");
   const [motorista, setMotorista] = useState("");
   const [ocupado, setOcupado] = useState(false);
+  const [origemCoord, setOrigemCoord] = useState<{ lat: number; lng: number } | null>(null);
+  const [destinoCoord, setDestinoCoord] = useState<{ lat: number; lng: number } | null>(null);
+  const [localizando, setLocalizando] = useState(false);
 
   const recarregar = useCallback(async () => {
     setViagens(await listar({}));
@@ -53,6 +60,53 @@ function PainelRastreamento() {
   useEffect(() => {
     void recarregar();
   }, [recarregar]);
+
+  // marca origem e destino no mapa automaticamente enquanto o empresário digita
+  useEffect(() => {
+    const texto = origem.trim();
+    if (texto.length < 4) {
+      setOrigemCoord(null);
+      return;
+    }
+    let vivo = true;
+    setLocalizando(true);
+    const t = window.setTimeout(async () => {
+      try {
+        const r = await localizar({ data: { endereco: texto } });
+        if (vivo) setOrigemCoord(r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null);
+      } finally {
+        if (vivo) setLocalizando(false);
+      }
+    }, 800);
+    return () => {
+      vivo = false;
+      window.clearTimeout(t);
+    };
+  }, [origem, localizar]);
+
+  useEffect(() => {
+    const texto = destino.trim();
+    if (texto.length < 4) {
+      setDestinoCoord(null);
+      return;
+    }
+    let vivo = true;
+    setLocalizando(true);
+    const t = window.setTimeout(async () => {
+      try {
+        const r = await localizar({ data: { endereco: texto } });
+        if (vivo)
+          setDestinoCoord(r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null);
+      } finally {
+        if (vivo) setLocalizando(false);
+      }
+    }, 800);
+    return () => {
+      vivo = false;
+      window.clearTimeout(t);
+    };
+  }, [destino, localizar]);
+
 
   async function novaViagem() {
     if (!titulo.trim()) return;
@@ -101,6 +155,31 @@ function PainelRastreamento() {
           Origem e destino ficam fixos no mapa da viagem, visíveis para os clientes mesmo antes do
           motorista iniciar a transmissão. Escreva endereços completos (com cidade e estado).
         </p>
+
+        {/* pré-visualização: marca origem e destino no mapa assim que os endereços são digitados */}
+        <div className="overflow-hidden rounded-2xl border border-border">
+          <MapaViagemLive
+            className="h-56 w-full"
+            origem={
+              origemCoord
+                ? { ...origemCoord, rotulo: "Origem", sub: origem.trim() }
+                : null
+            }
+            destino={
+              destinoCoord
+                ? { ...destinoCoord, rotulo: "Destino", sub: destino.trim() }
+                : null
+            }
+          />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          {localizando
+            ? "Localizando endereços no mapa…"
+            : origemCoord && destinoCoord
+              ? "Origem e destino marcados no mapa."
+              : "Digite os endereços para ver as marcações no mapa."}
+        </p>
+
         <button
           type="button"
           onClick={() => void novaViagem()}
@@ -109,8 +188,8 @@ function PainelRastreamento() {
         >
           <Plus className="size-4" /> {ocupado ? "Localizando no mapa…" : "Criar viagem"}
         </button>
-
       </PainelCard>
+
 
       <p className="mt-6 mb-3 text-xs font-bold tracking-wide text-muted-foreground uppercase">
         Viagens
@@ -148,6 +227,28 @@ function PainelRastreamento() {
                 ? "Trajeto programado visível no mapa (origem e destino fixos)."
                 : "Origem/destino não localizados no mapa — revise os endereços na próxima viagem."}
             </p>
+
+            {!v.encerrada && (
+              <div className="mt-3 overflow-hidden rounded-2xl border border-border">
+                <MapaViagemLive
+                  className="h-52 w-full"
+                  viagemId={v.id}
+                  ativo={v.compartilhando}
+                  origem={
+                    v.origem_lat != null && v.origem_lng != null
+                      ? { lat: v.origem_lat, lng: v.origem_lng, rotulo: "Origem", sub: v.origem }
+                      : null
+                  }
+                  destino={
+                    v.destino_lat != null && v.destino_lng != null
+                      ? { lat: v.destino_lat, lng: v.destino_lng, rotulo: "Destino", sub: v.destino }
+                      : null
+                  }
+                />
+              </div>
+            )}
+
+
 
 
             {!v.encerrada && (

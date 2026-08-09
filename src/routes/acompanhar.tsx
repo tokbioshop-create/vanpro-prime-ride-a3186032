@@ -177,10 +177,57 @@ function Acompanhar() {
           </div>
         )}
 
+        {viagens.length > 1 && (
+          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+            {viagens.map((v) => (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => setViagemId(v.id)}
+                className={`press shrink-0 rounded-full px-3.5 py-2 text-[11px] font-bold ${
+                  v.id === viagemId
+                    ? "bg-track-accent text-primary-foreground"
+                    : "track-chip text-track-muted"
+                }`}
+              >
+                {v.titulo}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <span className="track-chip flex items-center gap-2 px-3.5 py-2 text-xs font-bold">
+            <span
+              className={`size-2 rounded-full ${emAndamento ? "bg-success animate-pulse" : "bg-track-gold"}`}
+            />
+            {emAndamento
+              ? "Viagem em andamento"
+              : viagem
+                ? "Programada · aguardando início"
+                : "Nenhuma viagem ativa"}
+          </span>
+          <span className="text-track-muted flex items-center gap-1.5 text-[11px]">
+            <Signal className={`size-4 ${emAndamento ? "text-success" : ""}`} />
+            {posicao ? `Atualizado ${hora(posicao.registrada_em)}` : "Sem GPS ainda"}
+          </span>
+        </div>
+
+        {/* O mapa fica sempre visível, mesmo antes do motorista transmitir. */}
+        <div className="track-card mt-3 overflow-hidden">
+          <div className="h-[46vh] min-h-64 w-full">
+            <ClientOnly fallback={<div className="bg-track-surface-2 h-full w-full" />}>
+              <Suspense fallback={<div className="bg-track-surface-2 h-full w-full" />}>
+                <MapaRastreio ponto={posicao} origem={origem} destino={destino} />
+              </Suspense>
+            </ClientOnly>
+          </div>
+        </div>
+
         {carregando ? (
-          <p className="text-track-muted mt-6 text-xs">Carregando viagens…</p>
+          <p className="text-track-muted mt-3 text-xs">Carregando viagens…</p>
         ) : viagens.length === 0 ? (
-          <div className="track-card mt-4 p-6 text-center">
+          <div className="track-card mt-3 p-6 text-center">
             <MapPin className="text-track-muted mx-auto size-10" />
             <p className="mt-3 text-sm font-bold">Nenhuma viagem sendo compartilhada</p>
             <p className="text-track-muted mt-1 text-[11px]">
@@ -189,47 +236,7 @@ function Acompanhar() {
           </div>
         ) : (
           <>
-            {viagens.length > 1 && (
-              <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
-                {viagens.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setViagemId(v.id)}
-                    className={`press shrink-0 rounded-full px-3.5 py-2 text-[11px] font-bold ${
-                      v.id === viagemId
-                        ? "bg-track-accent text-primary-foreground"
-                        : "track-chip text-track-muted"
-                    }`}
-                  >
-                    {v.titulo}
-                  </button>
-                ))}
-              </div>
-            )}
 
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="track-chip flex items-center gap-2 px-3.5 py-2 text-xs font-bold">
-                <span
-                  className={`size-2 rounded-full ${emAndamento ? "bg-success animate-pulse" : "bg-track-gold"}`}
-                />
-                {emAndamento ? "Viagem em andamento" : "Programada · aguardando início"}
-              </span>
-              <span className="text-track-muted flex items-center gap-1.5 text-[11px]">
-                <Signal className={`size-4 ${emAndamento ? "text-success" : ""}`} />
-                {posicao ? `Atualizado ${hora(posicao.registrada_em)}` : "Sem GPS ainda"}
-              </span>
-            </div>
-
-            <div className="track-card mt-3 overflow-hidden">
-              <div className="h-[46vh] min-h-64 w-full">
-                <ClientOnly fallback={<div className="bg-track-surface-2 h-full w-full" />}>
-                  <Suspense fallback={<div className="bg-track-surface-2 h-full w-full" />}>
-                    <MapaRastreio ponto={posicao} origem={origem} destino={destino} />
-                  </Suspense>
-                </ClientOnly>
-              </div>
-            </div>
 
             <div className="track-card mt-3 p-4">
               <div className="flex items-center gap-3">
