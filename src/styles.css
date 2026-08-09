@@ -135,6 +135,20 @@
   background: var(--gradient-deep);
 }
 
+@utility track-card {
+  background: var(--track-surface);
+  border: 1px solid var(--track-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 20px 44px -28px oklch(0 0 0 / 0.8);
+}
+
+@utility track-chip {
+  background: var(--track-surface-2);
+  border: 1px solid var(--track-border);
+  border-radius: 999px;
+}
+
+
 @utility card-elevated {
   background: var(--surface);
   border: 0;
