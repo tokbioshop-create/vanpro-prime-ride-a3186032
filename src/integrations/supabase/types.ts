@@ -14,7 +14,112 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      posicoes_viagem: {
+        Row: {
+          id: number
+          latitude: number
+          longitude: number
+          precisao: number | null
+          registrada_em: string
+          rumo: number | null
+          velocidade: number | null
+          viagem_id: string
+        }
+        Insert: {
+          id?: never
+          latitude: number
+          longitude: number
+          precisao?: number | null
+          registrada_em?: string
+          rumo?: number | null
+          velocidade?: number | null
+          viagem_id: string
+        }
+        Update: {
+          id?: never
+          latitude?: number
+          longitude?: number
+          precisao?: number | null
+          registrada_em?: string
+          rumo?: number | null
+          velocidade?: number | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posicoes_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens_rastreadas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      viagem_motorista: {
+        Row: {
+          criado_em: string
+          token: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          token?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          token?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viagem_motorista_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: true
+            referencedRelation: "viagens_rastreadas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      viagens_rastreadas: {
+        Row: {
+          atualizada_em: string
+          compartilhando: boolean
+          criada_em: string
+          destino: string
+          empresa: string
+          encerrada: boolean
+          id: string
+          motorista: string
+          origem: string
+          titulo: string
+        }
+        Insert: {
+          atualizada_em?: string
+          compartilhando?: boolean
+          criada_em?: string
+          destino?: string
+          empresa?: string
+          encerrada?: boolean
+          id?: string
+          motorista?: string
+          origem?: string
+          titulo: string
+        }
+        Update: {
+          atualizada_em?: string
+          compartilhando?: boolean
+          criada_em?: string
+          destino?: string
+          empresa?: string
+          encerrada?: boolean
+          id?: string
+          motorista?: string
+          origem?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
