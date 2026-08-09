@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
+
 import carrinhoHero from "@/assets/carrinho-hero.jpg.asset.json";
 import { Campo } from "@/components/Campo";
 import { useReserva } from "@/data/reserva";
