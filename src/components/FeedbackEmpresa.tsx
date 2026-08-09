@@ -5,7 +5,7 @@ import { StarPicker } from "@/components/StarPicker";
 import { useFeedbacks } from "@/data/feedback";
 
 export function FeedbackEmpresa() {
-  const { lista, enviar } = useFeedbacks("empresa");
+  const { enviar } = useFeedbacks("empresa");
   const [nome, setNome] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estrelas, setEstrelas] = useState(0);
