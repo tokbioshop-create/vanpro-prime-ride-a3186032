@@ -7,6 +7,8 @@ import {
   Banknote,
   Star,
   Headset,
+  Navigation,
+
   ChevronRight,
 } from "lucide-react";
 import { AppScreen } from "@/components/AppScreen";
