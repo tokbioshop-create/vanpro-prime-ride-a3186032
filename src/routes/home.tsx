@@ -105,6 +105,17 @@ function Home() {
           </div>
         </section>
 
+        {config.empresa.banner ? (
+          <section className="mt-4 overflow-hidden rounded-2xl shadow-[var(--shadow-brand-soft)]">
+            <img
+              src={config.empresa.banner}
+              alt={`Banner promocional de ${config.empresa.nome}`}
+              loading="lazy"
+              className="block w-full object-cover"
+            />
+          </section>
+        ) : null}
+
         <DepoimentosCarrossel />
 
         <FeedbackEmpresa />
