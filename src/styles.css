@@ -274,3 +274,15 @@
 @utility animate-marquee-x {
   animation: marquee-x 32s linear infinite;
 }
+
+/* Leaflet cria panes com z-index até 1000, o que fazia o mapa cobrir modais.
+   Mantemos tudo dentro do próprio contexto de empilhamento do container. */
+.leaflet-container {
+  isolation: isolate;
+  z-index: 0;
+}
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
+}
