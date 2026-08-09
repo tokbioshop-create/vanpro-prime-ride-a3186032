@@ -50,17 +50,59 @@ function Pagamentos() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [pix, setPix] = useState<string | null>(null);
+  const [formCartao, setFormCartao] = useState(false);
+  const [cartao, setCartao] = useState({
+    numero: "",
+    titular: "",
+    validade: "",
+    cvv: "",
+    parcelas: 1,
+  });
   const cobrar = useServerFn(criarCobranca);
+
+  function selecionar(id: Metodo) {
+    setMetodo(id);
+    setErro(null);
+    setFormCartao(id !== "pix");
+  }
+
+  function validarCartao() {
+    const numero = cartao.numero.replace(/\D/g, "");
+    if (numero.length < 13 || numero.length > 19) return "Número do cartão inválido.";
+    if (cartao.titular.trim().length < 3) return "Informe o nome impresso no cartão.";
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cartao.validade)) return "Validade deve ser MM/AA.";
+    if (!/^\d{3,4}$/.test(cartao.cvv)) return "CVV inválido.";
+    return null;
+  }
 
   async function pagar() {
     setErro(null);
+    if (metodo !== "pix") {
+      const problema = validarCartao();
+      if (problema) {
+        setFormCartao(true);
+        setErro(problema);
+        return;
+      }
+    }
     setCarregando(true);
     try {
       const r = await cobrar({
         data: {
           valor,
-          metodo: metodo === "pix" ? "pix" : "cartao",
+          metodo,
           descricao: `Reserva VanPro · ${reserva.origem} → ${reserva.destino}`,
+          ...(metodo !== "pix"
+            ? {
+                cartao: {
+                  numero: cartao.numero.replace(/\D/g, ""),
+                  titular: cartao.titular.trim(),
+                  validade: cartao.validade,
+                  cvv: cartao.cvv,
+                  parcelas: metodo === "credito" ? cartao.parcelas : 1,
+                },
+              }
+            : {}),
           recebedor: {
             chavePix: config.financeiro.chavePix,
             subconta: config.financeiro.subconta,
@@ -71,6 +113,7 @@ function Pagamentos() {
         setErro(r.erro ?? "Não foi possível iniciar o pagamento.");
         return;
       }
+      setFormCartao(false);
       if (r.pixCopiaECola) setPix(r.pixCopiaECola);
       if (r.linkPagamento) {
         window.location.href = r.linkPagamento;
@@ -83,6 +126,7 @@ function Pagamentos() {
       setCarregando(false);
     }
   }
+
 
   return (
     <div className="min-h-screen bg-[oklch(0.14_0.06_268)]">
@@ -138,7 +182,7 @@ function Pagamentos() {
             type="button"
             aria-label={`Selecionar ${id}`}
             aria-pressed={metodo === id}
-            onClick={() => setMetodo(id)}
+            onClick={() => selecionar(id)}
             className={`press absolute rounded-2xl transition ${
               metodo === id ? "ring-2 ring-primary" : ""
             }`}
@@ -167,7 +211,105 @@ function Pagamentos() {
           )}
         </button>
 
-        {(erro || pix || pago) && (
+        {formCartao && !pago && (
+          <div className="fixed inset-0 z-[80] mx-auto flex max-w-md items-end justify-center bg-[oklch(0.14_0.06_268/0.65)] p-4">
+            <div className="card-elevated w-full space-y-3 p-5 text-left">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-extrabold">
+                  Cartão de {metodo === "credito" ? "crédito" : "débito"}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setFormCartao(false)}
+                  className="press text-xs font-bold text-muted-foreground"
+                >
+                  Fechar
+                </button>
+              </div>
+
+              <input
+                inputMode="numeric"
+                autoComplete="cc-number"
+                placeholder="Número do cartão"
+                value={cartao.numero}
+                onChange={(e) =>
+                  setCartao((c) => ({
+                    ...c,
+                    numero: e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 19)
+                      .replace(/(.{4})/g, "$1 ")
+                      .trim(),
+                  }))
+                }
+                className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+              />
+              <input
+                autoComplete="cc-name"
+                placeholder="Nome impresso no cartão"
+                value={cartao.titular}
+                onChange={(e) => setCartao((c) => ({ ...c, titular: e.target.value.slice(0, 120) }))}
+                className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+              />
+              <div className="flex gap-3">
+                <input
+                  inputMode="numeric"
+                  autoComplete="cc-exp"
+                  placeholder="MM/AA"
+                  value={cartao.validade}
+                  onChange={(e) => {
+                    const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+                    setCartao((c) => ({
+                      ...c,
+                      validade: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d,
+                    }));
+                  }}
+                  className="w-1/2 rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+                />
+                <input
+                  inputMode="numeric"
+                  autoComplete="cc-csc"
+                  placeholder="CVV"
+                  value={cartao.cvv}
+                  onChange={(e) =>
+                    setCartao((c) => ({ ...c, cvv: e.target.value.replace(/\D/g, "").slice(0, 4) }))
+                  }
+                  className="w-1/2 rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+                />
+              </div>
+              {metodo === "credito" && (
+                <select
+                  value={cartao.parcelas}
+                  onChange={(e) => setCartao((c) => ({ ...c, parcelas: Number(e.target.value) }))}
+                  className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
+                >
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                    <option key={n} value={n}>
+                      {n}x de {brl(valor / n)}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {erro && <p className="text-xs text-destructive">{erro}</p>}
+
+              <button
+                type="button"
+                onClick={pagar}
+                disabled={carregando}
+                className="press bg-brand flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-extrabold text-primary-foreground"
+              >
+                {carregando ? <Loader2 className="size-5 animate-spin" /> : `Pagar ${brl(valor)}`}
+              </button>
+              <p className="text-[11px] text-muted-foreground">
+                Pagamento processado pela Unicopag. Não guardamos os dados do seu cartão.
+              </p>
+            </div>
+          </div>
+        )}
+
+
+        {!formCartao && (erro || pix || pago) && (
           <div className="absolute inset-0 flex items-end justify-center bg-[oklch(0.14_0.06_268/0.6)] p-4">
             <div className="card-elevated w-full p-5 text-center">
               {pago && (
