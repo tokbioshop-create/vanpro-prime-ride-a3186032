@@ -83,6 +83,10 @@ export const listarViagensPainel = createServerFn({ method: "GET" }).handler(
       compartilhando: v.compartilhando,
       encerrada: v.encerrada,
       criada_em: v.criada_em,
+      origem_lat: v.origem_lat,
+      origem_lng: v.origem_lng,
+      destino_lat: v.destino_lat,
+      destino_lng: v.destino_lng,
       token: tokens.get(v.id) ?? null,
     }));
   },
@@ -92,9 +96,20 @@ export const criarViagemRastreada = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => criarSchema.parse(input))
   .handler(async ({ data }) => {
     const db = await admin();
+    const { geocodificar } = await import("./geocode.server");
+    const [origemCoord, destinoCoord] = await Promise.all([
+      geocodificar(data.origem),
+      geocodificar(data.destino),
+    ]);
     const { data: viagem, error } = await db
       .from("viagens_rastreadas")
-      .insert(data)
+      .insert({
+        ...data,
+        origem_lat: origemCoord?.lat ?? null,
+        origem_lng: origemCoord?.lng ?? null,
+        destino_lat: destinoCoord?.lat ?? null,
+        destino_lng: destinoCoord?.lng ?? null,
+      })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -102,8 +117,9 @@ export const criarViagemRastreada = createServerFn({ method: "POST" })
       .from("viagem_motorista")
       .insert({ viagem_id: viagem.id });
     if (erroToken) throw new Error(erroToken.message);
-    return { id: viagem.id };
+    return { id: viagem.id, localizado: Boolean(origemCoord && destinoCoord) };
   });
+
 
 export const definirCompartilhamento = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => compartilharSchema.parse(input))
