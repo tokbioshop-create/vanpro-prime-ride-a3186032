@@ -19,6 +19,7 @@ import { Route as EmpresasRouteImport } from './routes/empresas'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MotoristaRouteImport } from './routes/motorista'
 import { Route as PagamentosRouteImport } from './routes/pagamentos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as QrcodeRouteImport } from './routes/qrcode'
@@ -82,6 +83,11 @@ const HomeRoute = HomeRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaRoute = MotoristaRouteImport.update({
+  id: '/motorista',
+  path: '/motorista',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PagamentosRoute = PagamentosRouteImport.update({
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   HistoricoRoute: typeof HistoricoRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  MotoristaRoute: typeof MotoristaRoute
   PagamentosRoute: typeof PagamentosRoute
   PerfilRoute: typeof PerfilRoute
   QrcodeRoute: typeof QrcodeRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista': {
+      id: '/motorista'
+      path: '/motorista'
+      fullPath: '/motorista'
+      preLoaderRoute: typeof MotoristaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pagamentos': {
@@ -526,6 +546,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoricoRoute: HistoricoRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  MotoristaRoute: MotoristaRoute,
   PagamentosRoute: PagamentosRoute,
   PerfilRoute: PerfilRoute,
   QrcodeRoute: QrcodeRoute,
