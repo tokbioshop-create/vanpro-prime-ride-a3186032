@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { ClientOnly } from "@tanstack/react-router";
-import { MapPin, Radio, WifiOff } from "lucide-react";
-import { AppScreen } from "@/components/AppScreen";
+import { ClientOnly, Link } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight, MapPin, Radio, ShieldCheck, Signal, Users, WifiOff } from "lucide-react";
+import { BottomNav } from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { comoRastreio, type PosicaoRow, type ViagemRow } from "@/lib/rastreio-db";
 
@@ -15,12 +15,13 @@ export const Route = createFileRoute("/acompanhar")({
       {
         name: "description",
         content:
-          "Acompanhe em tempo real a localização GPS real do veículo durante a viagem no VanPro.",
+          "Veja origem, destino e a localização GPS real do veículo em tempo real durante a viagem no VanPro.",
       },
       { property: "og:title", content: "Acompanhar viagem — VanPro" },
       {
         property: "og:description",
-        content: "Localização real do veículo atualizada automaticamente enquanto a viagem está ativa.",
+        content:
+          "Trajeto planejado sempre visível e posição real do veículo atualizada automaticamente.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,6 +32,10 @@ export const Route = createFileRoute("/acompanhar")({
 
 const db = () => comoRastreio(supabase);
 
+function hora(iso: string) {
+  return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
 function Acompanhar() {
   const [viagens, setViagens] = useState<ViagemRow[]>([]);
   const [viagemId, setViagemId] = useState<string | null>(null);
@@ -38,7 +43,6 @@ function Acompanhar() {
   const [online, setOnline] = useState(true);
   const [carregando, setCarregando] = useState(true);
 
-  // viagens com compartilhamento ativo (RLS já filtra) + atualização em tempo real da lista
   useEffect(() => {
     let vivo = true;
     async function carregar() {
@@ -68,12 +72,12 @@ function Acompanhar() {
     };
   }, []);
 
-  // posição real da viagem selecionada
   useEffect(() => {
     if (!viagemId) {
       setPosicao(null);
       return;
     }
+    setPosicao(null);
     let vivo = true;
     async function ultima() {
       const { data } = await db()
@@ -100,7 +104,6 @@ function Acompanhar() {
       )
       .subscribe();
 
-    // rede instável: revalida a última posição periodicamente, sem quebrar o acompanhamento
     const timer = window.setInterval(() => void ultima(), 15000);
 
     return () => {
@@ -123,69 +126,175 @@ function Acompanhar() {
 
   const viagem = useMemo(() => viagens.find((v) => v.id === viagemId) ?? null, [viagens, viagemId]);
 
+  const origem = useMemo(
+    () =>
+      viagem?.origem_lat != null && viagem?.origem_lng != null
+        ? { lat: viagem.origem_lat, lng: viagem.origem_lng, rotulo: "Origem", sub: viagem.origem }
+        : null,
+    [viagem],
+  );
+  const destino = useMemo(
+    () =>
+      viagem?.destino_lat != null && viagem?.destino_lng != null
+        ? {
+            lat: viagem.destino_lat,
+            lng: viagem.destino_lng,
+            rotulo: "Destino",
+            sub: viagem.destino,
+          }
+        : null,
+    [viagem],
+  );
+
+  const emAndamento = Boolean(posicao) && !viagem?.encerrada;
+
   return (
-    <AppScreen title="Acompanhar viagem" subtitle="Localização real em tempo real">
-      {!online && (
-        <div className="mb-3 flex items-center gap-2 rounded-xl bg-surface-2 px-3 py-2 text-[11px] text-muted-foreground">
-          <WifiOff className="size-4" /> Sem internet. O acompanhamento volta sozinho ao reconectar.
-        </div>
-      )}
-
-      {carregando ? (
-        <p className="text-xs text-muted-foreground">Carregando viagens…</p>
-      ) : viagens.length === 0 ? (
-        <div className="card-elevated p-5 text-center">
-          <MapPin className="mx-auto size-10 text-muted-foreground" />
-          <p className="mt-3 text-sm font-bold">Nenhuma viagem sendo compartilhada</p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            O acompanhamento aparece aqui quando a empresa ativa o compartilhamento da viagem.
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-            {viagens.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                onClick={() => setViagemId(v.id)}
-                className={`press shrink-0 rounded-full px-3.5 py-2 text-[11px] font-bold ${
-                  v.id === viagemId
-                    ? "bg-brand text-primary-foreground"
-                    : "bg-surface-2 text-muted-foreground"
-                }`}
-              >
-                {v.titulo}
-              </button>
-            ))}
+    <div className="bg-track-bg text-track-foreground min-h-screen">
+      <div className="mx-auto max-w-md px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(7rem,calc(6rem+env(safe-area-inset-bottom)))]">
+        <header className="track-card flex items-center gap-3 px-4 py-4">
+          <Link
+            to="/home"
+            aria-label="Voltar"
+            className="press bg-track-surface-2 text-track-accent flex size-10 shrink-0 items-center justify-center rounded-full"
+          >
+            <ChevronLeft className="size-5" />
+          </Link>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-lg font-extrabold">
+              Acompanhar <span className="text-track-gold">viagem</span>
+            </h1>
+            <p className="text-track-muted truncate text-xs">Localização em tempo real</p>
           </div>
+          <span className="text-success flex items-center gap-1.5 text-xs font-bold">
+            <ShieldCheck className="size-4" /> Seguro
+          </span>
+        </header>
 
-          <div className="card-elevated overflow-hidden">
-            <div className="h-[58vh] w-full">
-              <ClientOnly fallback={<div className="h-full w-full bg-surface-2" />}>
-                <Suspense fallback={<div className="h-full w-full bg-surface-2" />}>
-                  <MapaRastreio ponto={posicao} />
-                </Suspense>
-              </ClientOnly>
+        {!online && (
+          <div className="track-card text-track-muted mt-3 flex items-center gap-2 px-4 py-3 text-[11px]">
+            <WifiOff className="size-4" /> Sem internet. O acompanhamento volta sozinho ao
+            reconectar.
+          </div>
+        )}
+
+        {carregando ? (
+          <p className="text-track-muted mt-6 text-xs">Carregando viagens…</p>
+        ) : viagens.length === 0 ? (
+          <div className="track-card mt-4 p-6 text-center">
+            <MapPin className="text-track-muted mx-auto size-10" />
+            <p className="mt-3 text-sm font-bold">Nenhuma viagem sendo compartilhada</p>
+            <p className="text-track-muted mt-1 text-[11px]">
+              O acompanhamento aparece aqui quando a empresa ativa o compartilhamento da viagem.
+            </p>
+          </div>
+        ) : (
+          <>
+            {viagens.length > 1 && (
+              <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+                {viagens.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => setViagemId(v.id)}
+                    className={`press shrink-0 rounded-full px-3.5 py-2 text-[11px] font-bold ${
+                      v.id === viagemId
+                        ? "bg-track-accent text-primary-foreground"
+                        : "track-chip text-track-muted"
+                    }`}
+                  >
+                    {v.titulo}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <span className="track-chip flex items-center gap-2 px-3.5 py-2 text-xs font-bold">
+                <span
+                  className={`size-2 rounded-full ${emAndamento ? "bg-success animate-pulse" : "bg-track-gold"}`}
+                />
+                {emAndamento ? "Viagem em andamento" : "Programada · aguardando início"}
+              </span>
+              <span className="text-track-muted flex items-center gap-1.5 text-[11px]">
+                <Signal className={`size-4 ${emAndamento ? "text-success" : ""}`} />
+                {posicao ? `Atualizado ${hora(posicao.registrada_em)}` : "Sem GPS ainda"}
+              </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-3">
-              <Radio
-                className={`size-4 ${posicao ? "animate-pulse text-success" : "text-muted-foreground"}`}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-bold">
-                  {viagem?.origem || "—"} → {viagem?.destino || "—"}
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {posicao
-                    ? `Atualizado às ${new Date(posicao.registrada_em).toLocaleTimeString("pt-BR")}`
-                    : "Aguardando o GPS do motorista…"}
-                </p>
+
+            <div className="track-card mt-3 overflow-hidden">
+              <div className="h-[46vh] min-h-64 w-full">
+                <ClientOnly fallback={<div className="bg-track-surface-2 h-full w-full" />}>
+                  <Suspense fallback={<div className="bg-track-surface-2 h-full w-full" />}>
+                    <MapaRastreio ponto={posicao} origem={origem} destino={destino} />
+                  </Suspense>
+                </ClientOnly>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </AppScreen>
+
+            <div className="track-card mt-3 p-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-track-surface-2 text-track-accent flex size-12 shrink-0 items-center justify-center rounded-2xl">
+                  <Radio className={`size-6 ${emAndamento ? "animate-pulse" : ""}`} />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-extrabold">{viagem?.titulo}</p>
+                  <p className="text-track-muted flex items-center gap-2 text-[11px]">
+                    <span
+                      className={`size-2 rounded-full ${emAndamento ? "bg-success" : "bg-track-gold"}`}
+                    />
+                    {emAndamento ? "Em andamento" : "Aguardando o GPS do motorista"}
+                    {viagem && <span>· Criada às {hora(viagem.criada_em)}</span>}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <div className="relative h-1.5 rounded-full bg-[linear-gradient(90deg,var(--track-accent),var(--track-gold))]">
+                  <span className="bg-track-accent absolute top-1/2 left-0 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4 ring-[var(--track-surface)]" />
+                  <span className="bg-track-gold absolute top-1/2 right-0 size-3.5 translate-x-1/2 -translate-y-1/2 rounded-full ring-4 ring-[var(--track-surface)]" />
+                  {emAndamento && (
+                    <span className="bg-track-surface-2 text-track-accent absolute top-1/2 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-4 ring-[var(--track-surface)]">
+                      <Radio className="size-4" />
+                    </span>
+                  )}
+                </div>
+                <div className="mt-3 flex items-start justify-between gap-4 text-[11px]">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold">Origem</p>
+                    <p className="text-track-muted truncate">{viagem?.origem || "—"}</p>
+                  </div>
+                  <div className="min-w-0 text-right">
+                    <p className="text-xs font-bold">Destino</p>
+                    <p className="text-track-muted truncate">{viagem?.destino || "—"}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="track-chip mt-4 flex items-center gap-3 rounded-2xl px-4 py-3">
+                <Users className="text-track-accent size-5 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold">
+                    {viagem?.compartilhando ? "Compartilhamento ativo" : "Compartilhamento parado"}
+                  </p>
+                  <p className="text-track-muted truncate text-[11px]">
+                    {viagem?.compartilhando
+                      ? "Esta viagem está sendo acompanhada"
+                      : "A empresa desativou o acompanhamento"}
+                  </p>
+                </div>
+                <ChevronRight className="text-track-muted size-4" />
+              </div>
+
+              {!origem && !destino && (
+                <p className="text-track-muted mt-3 text-[11px]">
+                  Origem e destino ainda não foram localizados no mapa para esta viagem.
+                </p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+      <BottomNav />
+    </div>
   );
 }
