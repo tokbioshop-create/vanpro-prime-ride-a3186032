@@ -390,7 +390,7 @@ function Agendar() {
                 : "O carrinho fica na barra inferior"}
             </span>
           </span>
-          {assentos.length > 0 && (
+          {itens.length > 0 && (
             <button
               type="button"
               onClick={limparSelecao}
