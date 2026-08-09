@@ -53,7 +53,7 @@ export function BottomNav() {
               </span>
             )}
           </Link>
-          <Tab to="/empresas" icon={Building2} label="Empresas" active={is("/empresas")} />
+          <Tab to="/acompanhar" icon={Navigation} label="Acompanhar" active={is("/acompanhar")} />
           <button
             type="button"
             onClick={() => setFeedbackAberto(true)}
