@@ -245,10 +245,8 @@ function Agendar() {
               <button
                 key={v.id}
                 type="button"
-                onClick={() => {
-                  setTipo(v.id);
-                  setAssentos([]);
-                }}
+                onClick={() => setTipo(v.id)}
+
                 className={`press flex items-center justify-center gap-1.5 rounded-full px-2 py-3 text-[10px] font-extrabold whitespace-nowrap transition ${
                   veiculo.id === v.id
                     ? "bg-brand text-primary-foreground shadow-[var(--shadow-brand)]"
