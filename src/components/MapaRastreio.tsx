@@ -43,6 +43,8 @@ export default function MapaRastreio({
       maxZoom: 19,
       attribution: "© OpenStreetMap © CARTO",
     }).addTo(m);
+    L.control.zoom({ position: "bottomright" }).addTo(m);
+
     planejado.current = L.polyline([], {
       color: OURO,
       weight: 4,
