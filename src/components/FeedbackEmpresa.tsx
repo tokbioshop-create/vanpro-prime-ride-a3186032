@@ -5,7 +5,7 @@ import { StarPicker } from "@/components/StarPicker";
 import { useFeedbacks } from "@/data/feedback";
 
 export function FeedbackEmpresa() {
-  const { lista, enviar } = useFeedbacks("empresa");
+  const { enviar } = useFeedbacks("empresa");
   const [nome, setNome] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estrelas, setEstrelas] = useState(0);
@@ -56,18 +56,10 @@ export function FeedbackEmpresa() {
         <Send className="size-4" /> Enviar feedback
       </button>
 
-      {lista.length > 0 && (
-        <ul className="space-y-2 pt-1">
-          {lista.slice(0, 3).map((f, i) => (
-            <li key={i} className="rounded-xl bg-[oklch(1_0_0/0.07)] p-3">
-              <p className="text-xs font-bold text-[oklch(0.99_0_0)]">
-                {f.nome} · <span className="text-[var(--gold)]">{"★".repeat(f.estrelas)}</span>
-              </p>
-              <p className="text-[11px] text-[oklch(0.84_0.02_265)]">{f.mensagem}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <p className="pt-1 text-[11px] text-[oklch(0.78_0.02_265)]">
+        Seu feedback aparece imediatamente no carrossel acima.
+      </p>
+
     </section>
   );
 

@@ -261,3 +261,16 @@
 @utility animate-sheen {
   animation: sheen 2.4s ease-in-out 1.6s infinite;
 }
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee-x {
+  animation: marquee-x 32s linear infinite;
+}

@@ -17,6 +17,7 @@ export type PainelConfig = {
     cidade: string;
     cnpj: string;
     descricao: string;
+    banner?: string;
   };
   agendamento: {
     rotas: string[];
@@ -56,6 +57,7 @@ export const painelPadrao: PainelConfig = {
     cidade: "Salvador · BA",
     cnpj: "12.345.678/0001-90",
     descricao: "Transporte executivo em vans, micro-ônibus e ônibus para empresas e turismo.",
+    banner: "",
   },
   agendamento: {
     rotas: ["Salvador → Praia do Forte", "Salvador → Feira de Santana"],

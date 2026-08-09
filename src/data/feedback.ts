@@ -9,17 +9,30 @@ export type Feedback = {
 };
 
 const KEY = "vanpro-feedbacks";
+const EVT = "vanpro-feedbacks-alterados";
+
+function ler(tipo: Feedback["tipo"]): Feedback[] {
+  try {
+    const raw = window.localStorage.getItem(KEY);
+    if (!raw) return [];
+    return (JSON.parse(raw) as Feedback[]).filter((f) => f.tipo === tipo);
+  } catch {
+    return [];
+  }
+}
 
 export function useFeedbacks(tipo: Feedback["tipo"]) {
   const [lista, setLista] = useState<Feedback[]>([]);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(KEY);
-      if (raw) setLista((JSON.parse(raw) as Feedback[]).filter((f) => f.tipo === tipo));
-    } catch {
-      /* ignora */
-    }
+    setLista(ler(tipo));
+    const sync = () => setLista(ler(tipo));
+    window.addEventListener(EVT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(EVT, sync);
+      window.removeEventListener("storage", sync);
+    };
   }, [tipo]);
 
   const enviar = useCallback(
@@ -28,11 +41,12 @@ export function useFeedbacks(tipo: Feedback["tipo"]) {
       try {
         const raw = window.localStorage.getItem(KEY);
         const todos = raw ? (JSON.parse(raw) as Feedback[]) : [];
-        window.localStorage.setItem(KEY, JSON.stringify([novo, ...todos]));
+        window.localStorage.setItem(KEY, JSON.stringify([novo, ...todos].slice(0, 100)));
       } catch {
         /* ignora */
       }
       setLista((prev) => [novo, ...prev]);
+      window.dispatchEvent(new Event(EVT));
     },
     [tipo],
   );

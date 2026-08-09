@@ -50,24 +50,25 @@ function Home() {
           alt="Van executiva VanPro em rodovia iluminada"
           width={720}
           height={775}
-          className="block w-full select-none"
+          className="block w-full select-none object-contain"
         />
 
         {/* painel de dados dinâmicos sobre a área escura do protótipo */}
-        <div className="absolute inset-x-0 top-[15%] bottom-[42%] flex flex-col justify-center bg-[linear-gradient(90deg,oklch(0.12_0.06_268)_0%,oklch(0.12_0.06_268/0.97)_58%,oklch(0.12_0.06_268/0)_86%)] px-5">
-          <h1 className="max-w-[62%] text-[26px] leading-[1.05] font-extrabold text-[oklch(0.99_0_0)]">
+        <div className="absolute inset-x-0 top-[15%] bottom-[42%] flex flex-col justify-center bg-[linear-gradient(90deg,oklch(0.12_0.06_268)_0%,oklch(0.12_0.06_268/0.95)_38%,oklch(0.12_0.06_268/0)_62%)] px-5">
+          <h1 className="max-w-[52%] text-[17px] leading-[1.15] font-extrabold text-[oklch(0.99_0_0)]">
             {config.empresa.nome}
           </h1>
-          <p className="mt-2.5 w-fit rounded-lg px-2.5 py-1 text-[11px] font-semibold text-[oklch(0.92_0.02_265)] ring-1 ring-[oklch(1_0_0/0.35)]">
+          <p className="mt-2 w-fit rounded-lg px-2 py-0.5 text-[10px] font-semibold text-[oklch(0.92_0.02_265)] ring-1 ring-[oklch(1_0_0/0.35)]">
             CNPJ. {config.empresa.cnpj}
           </p>
-          <span className="bg-gold mt-3 block h-1 w-9 rounded-full" />
-          <p className="mt-2 text-lg leading-tight font-extrabold tracking-tight text-[oklch(0.99_0_0)] uppercase">
+          <span className="bg-gold mt-2.5 block h-1 w-8 rounded-full" />
+          <p className="mt-2 text-[13px] leading-tight font-extrabold tracking-tight text-[oklch(0.99_0_0)] uppercase">
             {origem}
             <br />
             {destino ?? config.empresa.cidade}
           </p>
         </div>
+
 
         <button
           type="button"
@@ -103,6 +104,17 @@ function Home() {
             ))}
           </div>
         </section>
+
+        {config.empresa.banner ? (
+          <section className="mt-4 overflow-hidden rounded-2xl shadow-[var(--shadow-brand-soft)]">
+            <img
+              src={config.empresa.banner}
+              alt={`Banner promocional de ${config.empresa.nome}`}
+              loading="lazy"
+              className="block w-full object-cover"
+            />
+          </section>
+        ) : null}
 
         <DepoimentosCarrossel />
 
