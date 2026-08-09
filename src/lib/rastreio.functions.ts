@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { comoRastreio } from "./rastreio-db";
 
 const criarSchema = z.object({
   titulo: z.string().trim().min(1).max(120),
@@ -23,10 +24,10 @@ const posicaoSchema = z.object({
   precisao: z.number().nonnegative().max(100000).nullable().optional(),
   velocidade: z.number().min(-1).max(400).nullable().optional(),
   rumo: z.number().min(-1).max(360).nullable().optional(),
-  registrada_em: z.string().datetime().optional(),
+  registrada_em: z.string().optional(),
 });
 
-export type ViagemRastreada = {
+export type ViagemPainel = {
   id: string;
   titulo: string;
   origem: string;
@@ -36,50 +37,74 @@ export type ViagemRastreada = {
   compartilhando: boolean;
   encerrada: boolean;
   criada_em: string;
-  token?: string;
+  token: string | null;
 };
 
-/** Painel do empresário: lista todas as viagens (inclusive as não compartilhadas) + token do motorista. */
+async function admin() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return comoRastreio(supabaseAdmin);
+}
+
+/** Painel do empresário: lista todas as viagens (inclusive as não compartilhadas) + código do motorista. */
 export const listarViagensPainel = createServerFn({ method: "GET" }).handler(
-  async (): Promise<ViagemRastreada[]> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+  async (): Promise<ViagemPainel[]> => {
+    const db = await admin();
+    const { data, error } = await db
       .from("viagens_rastreadas")
-      .select("*, viagem_motorista(token)")
+      .select("*")
       .order("criada_em", { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
-    return (data ?? []).map((v) => {
-      const rel = (v as { viagem_motorista?: { token: string } | { token: string }[] })
-        .viagem_motorista;
-      const token = Array.isArray(rel) ? rel[0]?.token : rel?.token;
-      return { ...(v as unknown as ViagemRastreada), token };
-    });
+    const viagens = data ?? [];
+    if (viagens.length === 0) return [];
+
+    const { data: vinculos, error: erroVinculos } = await db
+      .from("viagem_motorista")
+      .select("viagem_id, token")
+      .in(
+        "viagem_id",
+        viagens.map((v) => v.id),
+      );
+    if (erroVinculos) throw new Error(erroVinculos.message);
+    const tokens = new Map((vinculos ?? []).map((v) => [v.viagem_id, v.token]));
+
+    return viagens.map((v) => ({
+      id: v.id,
+      titulo: v.titulo,
+      origem: v.origem,
+      destino: v.destino,
+      motorista: v.motorista,
+      empresa: v.empresa,
+      compartilhando: v.compartilhando,
+      encerrada: v.encerrada,
+      criada_em: v.criada_em,
+      token: tokens.get(v.id) ?? null,
+    }));
   },
 );
 
 export const criarViagemRastreada = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => criarSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: viagem, error } = await supabaseAdmin
+    const db = await admin();
+    const { data: viagem, error } = await db
       .from("viagens_rastreadas")
       .insert(data)
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    const { error: erroToken } = await supabaseAdmin
+    const { error: erroToken } = await db
       .from("viagem_motorista")
       .insert({ viagem_id: viagem.id });
     if (erroToken) throw new Error(erroToken.message);
-    return { id: viagem.id as string };
+    return { id: viagem.id };
   });
 
 export const definirCompartilhamento = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => compartilharSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const db = await admin();
+    const { error } = await db
       .from("viagens_rastreadas")
       .update({ compartilhando: data.compartilhando, atualizada_em: new Date().toISOString() })
       .eq("id", data.id);
@@ -90,8 +115,8 @@ export const definirCompartilhamento = createServerFn({ method: "POST" })
 export const encerrarViagemRastreada = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => idSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const db = await admin();
+    const { error } = await db
       .from("viagens_rastreadas")
       .update({ encerrada: true, compartilhando: false, atualizada_em: new Date().toISOString() })
       .eq("id", data.id);
@@ -103,17 +128,21 @@ export const encerrarViagemRastreada = createServerFn({ method: "POST" })
 export const viagemDoMotorista = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ token: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: vinculo, error } = await supabaseAdmin
+    const db = await admin();
+    const { data: vinculo, error } = await db
       .from("viagem_motorista")
-      .select("viagem_id, viagens_rastreadas(*)")
+      .select("viagem_id")
       .eq("token", data.token)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!vinculo) return { ok: false as const, erro: "Código do motorista inválido." };
-    const rel = (vinculo as { viagens_rastreadas: ViagemRastreada | ViagemRastreada[] })
-      .viagens_rastreadas;
-    const viagem = Array.isArray(rel) ? rel[0] : rel;
+
+    const { data: viagem, error: erroViagem } = await db
+      .from("viagens_rastreadas")
+      .select("*")
+      .eq("id", vinculo.viagem_id)
+      .maybeSingle();
+    if (erroViagem) throw new Error(erroViagem.message);
     if (!viagem) return { ok: false as const, erro: "Viagem não encontrada." };
     return { ok: true as const, viagem };
   });
@@ -122,25 +151,27 @@ export const viagemDoMotorista = createServerFn({ method: "POST" })
 export const enviarPosicao = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => posicaoSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: vinculo, error } = await supabaseAdmin
+    const db = await admin();
+    const { data: vinculo, error } = await db
       .from("viagem_motorista")
-      .select("viagem_id, viagens_rastreadas(compartilhando, encerrada)")
+      .select("viagem_id")
       .eq("token", data.token)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!vinculo) return { ok: false as const, erro: "Código do motorista inválido." };
 
-    const rel = (
-      vinculo as { viagens_rastreadas: { compartilhando: boolean; encerrada: boolean } | null }
-    ).viagens_rastreadas;
-    const estado = Array.isArray(rel) ? rel[0] : rel;
-    if (!estado || estado.encerrada) return { ok: false as const, erro: "Viagem encerrada." };
-    if (!estado.compartilhando)
+    const { data: viagem, error: erroViagem } = await db
+      .from("viagens_rastreadas")
+      .select("compartilhando, encerrada")
+      .eq("id", vinculo.viagem_id)
+      .maybeSingle();
+    if (erroViagem) throw new Error(erroViagem.message);
+    if (!viagem || viagem.encerrada) return { ok: false as const, erro: "Viagem encerrada." };
+    if (!viagem.compartilhando)
       return { ok: false as const, erro: "Compartilhamento desativado pelo empresário." };
 
-    const { error: erroInsert } = await supabaseAdmin.from("posicoes_viagem").insert({
-      viagem_id: (vinculo as { viagem_id: string }).viagem_id,
+    const { error: erroInsert } = await db.from("posicoes_viagem").insert({
+      viagem_id: vinculo.viagem_id,
       latitude: data.latitude,
       longitude: data.longitude,
       precisao: data.precisao ?? null,
