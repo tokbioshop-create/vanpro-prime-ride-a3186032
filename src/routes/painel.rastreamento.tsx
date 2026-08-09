@@ -228,6 +228,28 @@ function PainelRastreamento() {
                 : "Origem/destino não localizados no mapa — revise os endereços na próxima viagem."}
             </p>
 
+            {!v.encerrada && (
+              <div className="mt-3 overflow-hidden rounded-2xl border border-border">
+                <MapaViagemLive
+                  className="h-52 w-full"
+                  viagemId={v.id}
+                  ativo={v.compartilhando}
+                  origem={
+                    v.origem_lat != null && v.origem_lng != null
+                      ? { lat: v.origem_lat, lng: v.origem_lng, rotulo: "Origem", sub: v.origem }
+                      : null
+                  }
+                  destino={
+                    v.destino_lat != null && v.destino_lng != null
+                      ? { lat: v.destino_lat, lng: v.destino_lng, rotulo: "Destino", sub: v.destino }
+                      : null
+                  }
+                />
+              </div>
+            )}
+
+
+
 
             {!v.encerrada && (
               <div className="mt-3 flex gap-2">
