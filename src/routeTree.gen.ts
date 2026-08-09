@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcompanharRouteImport } from './routes/acompanhar'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -36,6 +37,11 @@ import { Route as PainelReservasRouteImport } from './routes/painel.reservas'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcompanharRoute = AcompanharRouteImport.update({
+  id: '/acompanhar',
+  path: '/acompanhar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendarRoute = AgendarRouteImport.update({
@@ -151,6 +157,7 @@ const PainelReservasRoute = PainelReservasRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -202,6 +210,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -305,6 +317,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcompanharRoute: typeof AcompanharRoute
   AgendarRoute: typeof AgendarRoute
   AjudaRoute: typeof AjudaRoute
   CadastroRoute: typeof CadastroRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acompanhar': {
+      id: '/acompanhar'
+      path: '/acompanhar'
+      fullPath: '/acompanhar'
+      preLoaderRoute: typeof AcompanharRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agendar': {
@@ -497,6 +517,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcompanharRoute: AcompanharRoute,
   AgendarRoute: AgendarRoute,
   AjudaRoute: AjudaRoute,
   CadastroRoute: CadastroRoute,
@@ -523,13 +544,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
