@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home as HomeIcon, CalendarDays, Building2, MessageSquareHeart, ShoppingCart } from "lucide-react";
+import { Home as HomeIcon, CalendarDays, Navigation, MessageSquareHeart, ShoppingCart } from "lucide-react";
 import { AppFeedbackSheet } from "@/components/AppFeedbackSheet";
 import { useCarrinho } from "@/data/carrinho";
 
@@ -53,7 +53,7 @@ export function BottomNav() {
               </span>
             )}
           </Link>
-          <Tab to="/empresas" icon={Building2} label="Empresas" active={is("/empresas")} />
+          <Tab to="/acompanhar" icon={Navigation} label="Acompanhar" active={is("/acompanhar")} />
           <button
             type="button"
             onClick={() => setFeedbackAberto(true)}

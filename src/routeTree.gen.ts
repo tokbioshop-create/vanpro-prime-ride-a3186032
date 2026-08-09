@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcompanharRouteImport } from './routes/acompanhar'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -18,6 +19,7 @@ import { Route as EmpresasRouteImport } from './routes/empresas'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MotoristaRouteImport } from './routes/motorista'
 import { Route as PagamentosRouteImport } from './routes/pagamentos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as QrcodeRouteImport } from './routes/qrcode'
@@ -31,11 +33,17 @@ import { Route as PainelContatosRouteImport } from './routes/painel.contatos'
 import { Route as PainelEmpresaRouteImport } from './routes/painel.empresa'
 import { Route as PainelFinanceiroRouteImport } from './routes/painel.financeiro'
 import { Route as PainelQrcodeRouteImport } from './routes/painel.qrcode'
+import { Route as PainelRastreamentoRouteImport } from './routes/painel.rastreamento'
 import { Route as PainelReservasRouteImport } from './routes/painel.reservas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcompanharRoute = AcompanharRouteImport.update({
+  id: '/acompanhar',
+  path: '/acompanhar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendarRoute = AgendarRouteImport.update({
@@ -76,6 +84,11 @@ const HomeRoute = HomeRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaRoute = MotoristaRouteImport.update({
+  id: '/motorista',
+  path: '/motorista',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PagamentosRoute = PagamentosRouteImport.update({
@@ -143,6 +156,11 @@ const PainelQrcodeRoute = PainelQrcodeRouteImport.update({
   path: '/painel/qrcode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PainelRastreamentoRoute = PainelRastreamentoRouteImport.update({
+  id: '/painel/rastreamento',
+  path: '/painel/rastreamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PainelReservasRoute = PainelReservasRouteImport.update({
   id: '/painel/reservas',
   path: '/painel/reservas',
@@ -151,6 +169,7 @@ const PainelReservasRoute = PainelReservasRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -159,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -171,11 +191,13 @@ export interface FileRoutesByFullPath {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel/': typeof PainelIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -184,6 +206,7 @@ export interface FileRoutesByTo {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -196,12 +219,14 @@ export interface FileRoutesByTo {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel': typeof PainelIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acompanhar': typeof AcompanharRoute
   '/agendar': typeof AgendarRoute
   '/ajuda': typeof AjudaRoute
   '/cadastro': typeof CadastroRoute
@@ -210,6 +235,7 @@ export interface FileRoutesById {
   '/historico': typeof HistoricoRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/motorista': typeof MotoristaRoute
   '/pagamentos': typeof PagamentosRoute
   '/perfil': typeof PerfilRoute
   '/qrcode': typeof QrcodeRoute
@@ -222,6 +248,7 @@ export interface FileRoutesById {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel/': typeof PainelIndexRoute
 }
@@ -229,6 +256,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -237,6 +265,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -249,11 +278,13 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -262,6 +293,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -274,11 +306,13 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel'
   id:
     | '__root__'
     | '/'
+    | '/acompanhar'
     | '/agendar'
     | '/ajuda'
     | '/cadastro'
@@ -287,6 +321,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/home'
     | '/login'
+    | '/motorista'
     | '/pagamentos'
     | '/perfil'
     | '/qrcode'
@@ -299,12 +334,14 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcompanharRoute: typeof AcompanharRoute
   AgendarRoute: typeof AgendarRoute
   AjudaRoute: typeof AjudaRoute
   CadastroRoute: typeof CadastroRoute
@@ -313,6 +350,7 @@ export interface RootRouteChildren {
   HistoricoRoute: typeof HistoricoRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  MotoristaRoute: typeof MotoristaRoute
   PagamentosRoute: typeof PagamentosRoute
   PerfilRoute: typeof PerfilRoute
   QrcodeRoute: typeof QrcodeRoute
@@ -325,6 +363,7 @@ export interface RootRouteChildren {
   PainelEmpresaRoute: typeof PainelEmpresaRoute
   PainelFinanceiroRoute: typeof PainelFinanceiroRoute
   PainelQrcodeRoute: typeof PainelQrcodeRoute
+  PainelRastreamentoRoute: typeof PainelRastreamentoRoute
   PainelReservasRoute: typeof PainelReservasRoute
   PainelIndexRoute: typeof PainelIndexRoute
 }
@@ -336,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acompanhar': {
+      id: '/acompanhar'
+      path: '/acompanhar'
+      fullPath: '/acompanhar'
+      preLoaderRoute: typeof AcompanharRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agendar': {
@@ -392,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista': {
+      id: '/motorista'
+      path: '/motorista'
+      fullPath: '/motorista'
+      preLoaderRoute: typeof MotoristaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pagamentos': {
@@ -485,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PainelQrcodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/painel/rastreamento': {
+      id: '/painel/rastreamento'
+      path: '/painel/rastreamento'
+      fullPath: '/painel/rastreamento'
+      preLoaderRoute: typeof PainelRastreamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/painel/reservas': {
       id: '/painel/reservas'
       path: '/painel/reservas'
@@ -497,6 +557,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcompanharRoute: AcompanharRoute,
   AgendarRoute: AgendarRoute,
   AjudaRoute: AjudaRoute,
   CadastroRoute: CadastroRoute,
@@ -505,6 +566,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoricoRoute: HistoricoRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  MotoristaRoute: MotoristaRoute,
   PagamentosRoute: PagamentosRoute,
   PerfilRoute: PerfilRoute,
   QrcodeRoute: QrcodeRoute,
@@ -517,19 +579,10 @@ const rootRouteChildren: RootRouteChildren = {
   PainelEmpresaRoute: PainelEmpresaRoute,
   PainelFinanceiroRoute: PainelFinanceiroRoute,
   PainelQrcodeRoute: PainelQrcodeRoute,
+  PainelRastreamentoRoute: PainelRastreamentoRoute,
   PainelReservasRoute: PainelReservasRoute,
   PainelIndexRoute: PainelIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
