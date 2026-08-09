@@ -155,6 +155,31 @@ function PainelRastreamento() {
           Origem e destino ficam fixos no mapa da viagem, visíveis para os clientes mesmo antes do
           motorista iniciar a transmissão. Escreva endereços completos (com cidade e estado).
         </p>
+
+        {/* pré-visualização: marca origem e destino no mapa assim que os endereços são digitados */}
+        <div className="overflow-hidden rounded-2xl border border-border">
+          <MapaViagemLive
+            className="h-56 w-full"
+            origem={
+              origemCoord
+                ? { ...origemCoord, rotulo: "Origem", sub: origem.trim() }
+                : null
+            }
+            destino={
+              destinoCoord
+                ? { ...destinoCoord, rotulo: "Destino", sub: destino.trim() }
+                : null
+            }
+          />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          {localizando
+            ? "Localizando endereços no mapa…"
+            : origemCoord && destinoCoord
+              ? "Origem e destino marcados no mapa."
+              : "Digite os endereços para ver as marcações no mapa."}
+        </p>
+
         <button
           type="button"
           onClick={() => void novaViagem()}
@@ -163,8 +188,8 @@ function PainelRastreamento() {
         >
           <Plus className="size-4" /> {ocupado ? "Localizando no mapa…" : "Criar viagem"}
         </button>
-
       </PainelCard>
+
 
       <p className="mt-6 mb-3 text-xs font-bold tracking-wide text-muted-foreground uppercase">
         Viagens
