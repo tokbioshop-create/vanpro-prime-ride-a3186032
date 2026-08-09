@@ -61,6 +61,9 @@ export const criarCobranca = createServerFn({ method: "POST" })
     }
     const base = process.env["UNICOPAG_API_URL"] ?? "https://api.unicopag.com/v1";
 
+    const cartao = data.cartao;
+    const [mes, ano] = cartao ? cartao.validade.replace("/", "").match(/.{1,2}/g)! : [];
+
     const resp = await fetch(`${base}/charges`, {
       method: "POST",
       headers: {
@@ -70,12 +73,25 @@ export const criarCobranca = createServerFn({ method: "POST" })
       body: JSON.stringify({
         amount: Math.round(data.valor * 100),
         currency: "BRL",
-        payment_method: data.metodo,
+        payment_method: data.metodo === "pix" ? "pix" : data.metodo === "debito" ? "debit_card" : "credit_card",
         description: data.descricao,
         customer: data.cliente,
+        installments: cartao?.parcelas ?? 1,
+        ...(cartao
+          ? {
+              card: {
+                number: cartao.numero,
+                holder_name: cartao.titular,
+                exp_month: mes,
+                exp_year: `20${ano}`,
+                cvv: cartao.cvv,
+              },
+            }
+          : {}),
         split: data.recebedor,
       }),
     });
+
 
     const texto = await resp.text();
     if (!resp.ok) {
