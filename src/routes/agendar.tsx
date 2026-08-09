@@ -104,8 +104,7 @@ function Seat({
 
 function Agendar() {
   const { config } = usePainel();
-  const { itens, adicionar, remover } = useCarrinho();
-  const [assentos, setAssentos] = useState<string[]>([]);
+  const { itens, adicionar, remover, limpar } = useCarrinho();
   const [tipo, setTipo] = useState<VeiculoTipo>("van");
   const [horarioIdx, setHorarioIdx] = useState(0);
 
@@ -119,14 +118,16 @@ function Agendar() {
 
   const itemId = (s: string) => `${veiculo.id}-${horaLabel}-${s}`;
 
+  // seleção espelha o carrinho: o que está no carrinho está selecionado no mapa
+  const prefixo = `${veiculo.id}-${horaLabel}-`;
+  const assentos = itens.filter((i) => i.id.startsWith(prefixo)).map((i) => i.assento);
+
   const toggle = (s: string) => {
     if (veiculo.ocupados.includes(s)) return;
     if (assentos.includes(s)) {
-      setAssentos((p) => p.filter((x) => x !== s));
       remover(itemId(s));
       return;
     }
-    setAssentos((p) => [...p, s]);
     adicionar({
       id: itemId(s),
       veiculo: veiculo.label,
@@ -144,10 +145,8 @@ function Agendar() {
       .flatMap((f) => veiculo.colunas.map((c) => f + c))
       .find((id) => !veiculo.ocupados.includes(id) && !assentos.includes(id));
 
-  const limparSelecao = () => {
-    assentos.forEach((s) => remover(itemId(s)));
-    setAssentos([]);
-  };
+  const limparSelecao = () => limpar();
+
 
 
   return (
