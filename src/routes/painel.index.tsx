@@ -45,7 +45,14 @@ const secoes = [
     hint: "Rotas, horários, veículos e preço",
   },
   { to: "/painel/qrcode", icon: QrCode, label: "QR Code da empresa", hint: "Código de acesso do cliente" },
+  {
+    to: "/painel/rastreamento",
+    icon: Navigation,
+    label: "Rastreamento GPS",
+    hint: "Autorizar acompanhamento em tempo real",
+  },
   { to: "/painel/reservas", icon: Ticket, label: "Reservas recebidas", hint: "Registro dos clientes" },
+
   { to: "/painel/avaliacoes", icon: Star, label: "Avaliações", hint: "Elogios e estrelas" },
   { to: "/painel/financeiro", icon: Banknote, label: "Recebimentos", hint: "Dados bancários e subconta" },
   { to: "/painel/contatos", icon: Headset, label: "Ajuda e contatos", hint: "WhatsApp, e-mail e redes" },
