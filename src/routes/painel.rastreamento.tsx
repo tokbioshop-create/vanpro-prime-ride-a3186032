@@ -41,6 +41,7 @@ function PainelRastreamento() {
   const criar = useServerFn(criarViagemRastreada);
   const compartilhar = useServerFn(definirCompartilhamento);
   const encerrar = useServerFn(encerrarViagemRastreada);
+  const localizar = useServerFn(localizarEndereco);
 
   const [viagens, setViagens] = useState<ViagemPainel[]>([]);
   const [titulo, setTitulo] = useState("");
@@ -48,6 +49,9 @@ function PainelRastreamento() {
   const [destino, setDestino] = useState("");
   const [motorista, setMotorista] = useState("");
   const [ocupado, setOcupado] = useState(false);
+  const [origemCoord, setOrigemCoord] = useState<{ lat: number; lng: number } | null>(null);
+  const [destinoCoord, setDestinoCoord] = useState<{ lat: number; lng: number } | null>(null);
+  const [localizando, setLocalizando] = useState(false);
 
   const recarregar = useCallback(async () => {
     setViagens(await listar({}));
@@ -56,6 +60,53 @@ function PainelRastreamento() {
   useEffect(() => {
     void recarregar();
   }, [recarregar]);
+
+  // marca origem e destino no mapa automaticamente enquanto o empresário digita
+  useEffect(() => {
+    const texto = origem.trim();
+    if (texto.length < 4) {
+      setOrigemCoord(null);
+      return;
+    }
+    let vivo = true;
+    setLocalizando(true);
+    const t = window.setTimeout(async () => {
+      try {
+        const r = await localizar({ data: { endereco: texto } });
+        if (vivo) setOrigemCoord(r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null);
+      } finally {
+        if (vivo) setLocalizando(false);
+      }
+    }, 800);
+    return () => {
+      vivo = false;
+      window.clearTimeout(t);
+    };
+  }, [origem, localizar]);
+
+  useEffect(() => {
+    const texto = destino.trim();
+    if (texto.length < 4) {
+      setDestinoCoord(null);
+      return;
+    }
+    let vivo = true;
+    setLocalizando(true);
+    const t = window.setTimeout(async () => {
+      try {
+        const r = await localizar({ data: { endereco: texto } });
+        if (vivo)
+          setDestinoCoord(r.lat != null && r.lng != null ? { lat: r.lat, lng: r.lng } : null);
+      } finally {
+        if (vivo) setLocalizando(false);
+      }
+    }, 800);
+    return () => {
+      vivo = false;
+      window.clearTimeout(t);
+    };
+  }, [destino, localizar]);
+
 
   async function novaViagem() {
     if (!titulo.trim()) return;
