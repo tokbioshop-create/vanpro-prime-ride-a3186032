@@ -50,17 +50,59 @@ function Pagamentos() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [pix, setPix] = useState<string | null>(null);
+  const [formCartao, setFormCartao] = useState(false);
+  const [cartao, setCartao] = useState({
+    numero: "",
+    titular: "",
+    validade: "",
+    cvv: "",
+    parcelas: 1,
+  });
   const cobrar = useServerFn(criarCobranca);
+
+  function selecionar(id: Metodo) {
+    setMetodo(id);
+    setErro(null);
+    setFormCartao(id !== "pix");
+  }
+
+  function validarCartao() {
+    const numero = cartao.numero.replace(/\D/g, "");
+    if (numero.length < 13 || numero.length > 19) return "Número do cartão inválido.";
+    if (cartao.titular.trim().length < 3) return "Informe o nome impresso no cartão.";
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cartao.validade)) return "Validade deve ser MM/AA.";
+    if (!/^\d{3,4}$/.test(cartao.cvv)) return "CVV inválido.";
+    return null;
+  }
 
   async function pagar() {
     setErro(null);
+    if (metodo !== "pix") {
+      const problema = validarCartao();
+      if (problema) {
+        setFormCartao(true);
+        setErro(problema);
+        return;
+      }
+    }
     setCarregando(true);
     try {
       const r = await cobrar({
         data: {
           valor,
-          metodo: metodo === "pix" ? "pix" : "cartao",
+          metodo,
           descricao: `Reserva VanPro · ${reserva.origem} → ${reserva.destino}`,
+          ...(metodo !== "pix"
+            ? {
+                cartao: {
+                  numero: cartao.numero.replace(/\D/g, ""),
+                  titular: cartao.titular.trim(),
+                  validade: cartao.validade,
+                  cvv: cartao.cvv,
+                  parcelas: metodo === "credito" ? cartao.parcelas : 1,
+                },
+              }
+            : {}),
           recebedor: {
             chavePix: config.financeiro.chavePix,
             subconta: config.financeiro.subconta,
@@ -71,6 +113,7 @@ function Pagamentos() {
         setErro(r.erro ?? "Não foi possível iniciar o pagamento.");
         return;
       }
+      setFormCartao(false);
       if (r.pixCopiaECola) setPix(r.pixCopiaECola);
       if (r.linkPagamento) {
         window.location.href = r.linkPagamento;
@@ -83,6 +126,7 @@ function Pagamentos() {
       setCarregando(false);
     }
   }
+
 
   return (
     <div className="min-h-screen bg-[oklch(0.14_0.06_268)]">
