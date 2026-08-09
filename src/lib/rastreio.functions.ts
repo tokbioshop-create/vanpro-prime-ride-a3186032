@@ -37,8 +37,13 @@ export type ViagemPainel = {
   compartilhando: boolean;
   encerrada: boolean;
   criada_em: string;
+  origem_lat: number | null;
+  origem_lng: number | null;
+  destino_lat: number | null;
+  destino_lng: number | null;
   token: string | null;
 };
+
 
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
