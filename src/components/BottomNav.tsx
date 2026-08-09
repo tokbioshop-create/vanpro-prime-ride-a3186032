@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home as HomeIcon, CalendarDays, Building2, MessageSquareHeart, ShoppingCart } from "lucide-react";
+import { Home as HomeIcon, CalendarDays, Navigation, MessageSquareHeart, ShoppingCart } from "lucide-react";
 import { AppFeedbackSheet } from "@/components/AppFeedbackSheet";
 import { useCarrinho } from "@/data/carrinho";
 

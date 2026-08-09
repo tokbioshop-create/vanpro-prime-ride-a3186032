@@ -33,6 +33,7 @@ import { Route as PainelContatosRouteImport } from './routes/painel.contatos'
 import { Route as PainelEmpresaRouteImport } from './routes/painel.empresa'
 import { Route as PainelFinanceiroRouteImport } from './routes/painel.financeiro'
 import { Route as PainelQrcodeRouteImport } from './routes/painel.qrcode'
+import { Route as PainelRastreamentoRouteImport } from './routes/painel.rastreamento'
 import { Route as PainelReservasRouteImport } from './routes/painel.reservas'
 
 const IndexRoute = IndexRouteImport.update({
@@ -155,6 +156,11 @@ const PainelQrcodeRoute = PainelQrcodeRouteImport.update({
   path: '/painel/qrcode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PainelRastreamentoRoute = PainelRastreamentoRouteImport.update({
+  id: '/painel/rastreamento',
+  path: '/painel/rastreamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PainelReservasRoute = PainelReservasRouteImport.update({
   id: '/painel/reservas',
   path: '/painel/reservas',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel/': typeof PainelIndexRoute
 }
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel': typeof PainelIndexRoute
 }
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/painel/empresa': typeof PainelEmpresaRoute
   '/painel/financeiro': typeof PainelFinanceiroRoute
   '/painel/qrcode': typeof PainelQrcodeRoute
+  '/painel/rastreamento': typeof PainelRastreamentoRoute
   '/painel/reservas': typeof PainelReservasRoute
   '/painel/': typeof PainelIndexRoute
 }
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel/'
   fileRoutesByTo: FileRoutesByTo
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel'
   id:
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/painel/empresa'
     | '/painel/financeiro'
     | '/painel/qrcode'
+    | '/painel/rastreamento'
     | '/painel/reservas'
     | '/painel/'
   fileRoutesById: FileRoutesById
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   PainelEmpresaRoute: typeof PainelEmpresaRoute
   PainelFinanceiroRoute: typeof PainelFinanceiroRoute
   PainelQrcodeRoute: typeof PainelQrcodeRoute
+  PainelRastreamentoRoute: typeof PainelRastreamentoRoute
   PainelReservasRoute: typeof PainelReservasRoute
   PainelIndexRoute: typeof PainelIndexRoute
 }
@@ -525,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PainelQrcodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/painel/rastreamento': {
+      id: '/painel/rastreamento'
+      path: '/painel/rastreamento'
+      fullPath: '/painel/rastreamento'
+      preLoaderRoute: typeof PainelRastreamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/painel/reservas': {
       id: '/painel/reservas'
       path: '/painel/reservas'
@@ -559,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   PainelEmpresaRoute: PainelEmpresaRoute,
   PainelFinanceiroRoute: PainelFinanceiroRoute,
   PainelQrcodeRoute: PainelQrcodeRoute,
+  PainelRastreamentoRoute: PainelRastreamentoRoute,
   PainelReservasRoute: PainelReservasRoute,
   PainelIndexRoute: PainelIndexRoute,
 }
