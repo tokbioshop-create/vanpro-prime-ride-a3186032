@@ -17,6 +17,7 @@ export type PainelConfig = {
     cidade: string;
     cnpj: string;
     descricao: string;
+    banner?: string;
   };
   agendamento: {
     rotas: string[];
