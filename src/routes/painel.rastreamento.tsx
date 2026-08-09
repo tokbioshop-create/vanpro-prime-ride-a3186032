@@ -143,6 +143,13 @@ function PainelRastreamento() {
               </span>
             </div>
 
+            <p className="mt-2 text-[10px] text-muted-foreground">
+              {v.origem_lat != null && v.destino_lat != null
+                ? "Trajeto programado visível no mapa (origem e destino fixos)."
+                : "Origem/destino não localizados no mapa — revise os endereços na próxima viagem."}
+            </p>
+
+
             {!v.encerrada && (
               <div className="mt-3 flex gap-2">
                 <button
