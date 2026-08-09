@@ -4,14 +4,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { Copy, Plus, Radio, Square } from "lucide-react";
 import { AppScreen } from "@/components/AppScreen";
 import { PainelCard, TextField } from "@/components/PainelForm";
+import { MapaViagemLive } from "@/components/MapaViagemLive";
 import { usePainel } from "@/data/painel";
 import {
   criarViagemRastreada,
   definirCompartilhamento,
   encerrarViagemRastreada,
   listarViagensPainel,
+  localizarEndereco,
   type ViagemPainel,
 } from "@/lib/rastreio.functions";
+
 
 export const Route = createFileRoute("/painel/rastreamento")({
   head: () => ({
