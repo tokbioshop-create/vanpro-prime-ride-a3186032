@@ -11,7 +11,12 @@ export type ViagemRow = {
   encerrada: boolean;
   criada_em: string;
   atualizada_em: string;
+  origem_lat: number | null;
+  origem_lng: number | null;
+  destino_lat: number | null;
+  destino_lng: number | null;
 };
+
 
 export type PosicaoRow = {
   id: number;

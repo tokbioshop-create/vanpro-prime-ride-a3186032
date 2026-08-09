@@ -84,17 +84,32 @@ function PainelRastreamento() {
     <AppScreen title="Rastreamento GPS" subtitle="Permissão de acompanhamento" back="/painel">
       <PainelCard>
         <TextField label="Nome da viagem" value={titulo} onChange={setTitulo} />
-        <TextField label="Origem" value={origem} onChange={setOrigem} />
-        <TextField label="Destino" value={destino} onChange={setDestino} />
+        <TextField
+          label="Origem"
+          value={origem}
+          onChange={setOrigem}
+          placeholder="Ex.: Terminal Rodoviário, Salvador BA"
+        />
+        <TextField
+          label="Destino"
+          value={destino}
+          onChange={setDestino}
+          placeholder="Ex.: Aeroporto de Salvador BA"
+        />
         <TextField label="Motorista" value={motorista} onChange={setMotorista} />
+        <p className="text-[11px] text-muted-foreground">
+          Origem e destino ficam fixos no mapa da viagem, visíveis para os clientes mesmo antes do
+          motorista iniciar a transmissão. Escreva endereços completos (com cidade e estado).
+        </p>
         <button
           type="button"
           onClick={() => void novaViagem()}
-          disabled={ocupado}
+          disabled={ocupado || !titulo.trim() || !origem.trim() || !destino.trim()}
           className="press bg-brand flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold text-primary-foreground disabled:opacity-50"
         >
-          <Plus className="size-4" /> Criar viagem
+          <Plus className="size-4" /> {ocupado ? "Localizando no mapa…" : "Criar viagem"}
         </button>
+
       </PainelCard>
 
       <p className="mt-6 mb-3 text-xs font-bold tracking-wide text-muted-foreground uppercase">
@@ -127,6 +142,13 @@ function PainelRastreamento() {
                 {v.encerrada ? "encerrada" : v.compartilhando ? "ao vivo" : "parada"}
               </span>
             </div>
+
+            <p className="mt-2 text-[10px] text-muted-foreground">
+              {v.origem_lat != null && v.destino_lat != null
+                ? "Trajeto programado visível no mapa (origem e destino fixos)."
+                : "Origem/destino não localizados no mapa — revise os endereços na próxima viagem."}
+            </p>
+
 
             {!v.encerrada && (
               <div className="mt-3 flex gap-2">
