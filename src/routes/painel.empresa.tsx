@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Trash2, Upload } from "lucide-react";
+import { toast } from "sonner";
 import { AppScreen } from "@/components/AppScreen";
 import { AreaField, PainelCard, SaveButton, TextField } from "@/components/PainelForm";
 import { usePainel } from "@/data/painel";
