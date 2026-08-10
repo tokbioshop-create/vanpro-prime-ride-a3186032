@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Copy, Plus, Radio, Square } from "lucide-react";
+import { Copy, Plus, Radio, Square, Trash2 } from "lucide-react";
 import { AppScreen } from "@/components/AppScreen";
 import { PainelCard, TextField } from "@/components/PainelForm";
 import { MapaViagemLive } from "@/components/MapaViagemLive";
@@ -10,10 +10,12 @@ import {
   criarViagemRastreada,
   definirCompartilhamento,
   encerrarViagemRastreada,
+  excluirViagemRastreada,
   listarViagensPainel,
   localizarEndereco,
   type ViagemPainel,
 } from "@/lib/rastreio.functions";
+
 
 
 export const Route = createFileRoute("/painel/rastreamento")({
@@ -41,7 +43,9 @@ function PainelRastreamento() {
   const criar = useServerFn(criarViagemRastreada);
   const compartilhar = useServerFn(definirCompartilhamento);
   const encerrar = useServerFn(encerrarViagemRastreada);
+  const excluir = useServerFn(excluirViagemRastreada);
   const localizar = useServerFn(localizarEndereco);
+
 
   const [viagens, setViagens] = useState<ViagemPainel[]>([]);
   const [titulo, setTitulo] = useState("");
@@ -267,15 +271,33 @@ function PainelRastreamento() {
                 <button
                   type="button"
                   onClick={async () => {
-                    await encerrar({ data: { id: v.id } });
-                    await recarregar();
+                    if (confirm("Deseja realmente encerrar esta viagem?")) {
+                      await encerrar({ data: { id: v.id } });
+                      await recarregar();
+                    }
                   }}
                   className="press flex h-11 items-center justify-center rounded-xl bg-surface-2 px-4 text-xs font-bold text-destructive"
                   aria-label="Encerrar viagem"
+                  title="Encerrar"
                 >
                   <Square className="size-4" />
                 </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (confirm("AVISO: Isso excluirá permanentemente a viagem e todo o histórico de posições. Deseja excluir?")) {
+                      await excluir({ data: { id: v.id } });
+                      await recarregar();
+                    }
+                  }}
+                  className="press flex h-11 items-center justify-center rounded-xl bg-surface-2 px-4 text-xs font-bold text-destructive"
+                  aria-label="Excluir viagem"
+                  title="Excluir Permanentemente"
+                >
+                  <Trash2 className="size-4" />
+                </button>
               </div>
+
             )}
 
             {v.token && !v.encerrada && (
