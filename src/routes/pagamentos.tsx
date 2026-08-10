@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, CheckCircle2, CreditCard, Loader2, LockKeyhole, QrCode, ShieldCheck } from "lucide-react";
 import carrinhoHero from "@/assets/carrinho-hero.jpg.asset.json";
 import { brl } from "@/data/vanpro";
