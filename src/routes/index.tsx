@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck, Clock, Star } from "lucide-react";
 import { VanProLogo } from "@/components/VanProLogo";
 import van from "@/assets/van.png";
 import minibus from "@/assets/minibus.png";
+import onibusImg from "@/assets/veiculos/onibus.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -63,39 +64,29 @@ function Splash() {
         </div>
 
 
-        {/* Veículos entrando em cena */}
+        {/* Veículos entrando em cena — lado a lado, em profundidade */}
         <div className="relative my-6 flex w-full items-end justify-center">
           <img
-            src={van}
-            alt="Van executiva VanPro"
-            width={1024}
-            height={640}
-            className="animate-drive-left relative z-20 -mr-16 w-[48%] drop-shadow-[0_20px_30px_oklch(0_0_0/0.75)]"
+            src={onibusImg.url}
+            alt="Ônibus executivo VanPro"
+            className="animate-drive-left relative z-10 -mr-10 w-[44%] origin-bottom scale-90 opacity-90 drop-shadow-[0_18px_26px_oklch(0_0_0/0.7)]"
             style={{ animationDelay: "1.15s" }}
           />
           <img
             src={minibus}
             alt="Micro-ônibus executivo VanPro"
-            width={1024}
-            height={640}
-            className="animate-rise relative z-30 w-[54%] drop-shadow-[0_22px_36px_oklch(0_0_0/0.85)]"
+            className="animate-rise relative z-20 -mr-10 w-[50%] origin-bottom scale-95 drop-shadow-[0_20px_30px_oklch(0_0_0/0.78)]"
             style={{ animationDelay: "1.45s" }}
           />
-          <div
-            className="animate-drive-right relative z-10 -ml-16 flex w-[48%] items-end justify-center drop-shadow-[0_20px_30px_oklch(0_0_0/0.75)]"
+          <img
+            src={van}
+            alt="Van executiva VanPro"
+            className="animate-drive-right relative z-30 w-[54%] origin-bottom drop-shadow-[0_24px_36px_oklch(0_0_0/0.85)]"
             style={{ animationDelay: "1.75s" }}
-          >
-            <div className="bg-brand flex size-24 items-center justify-center rounded-3xl p-4">
-              <svg viewBox="0 0 24 24" fill="none" className="text-primary-foreground size-full" stroke="currentColor" strokeWidth="1.5">
-                <path d="M4 18h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2z" />
-                <path d="M22 9h-6a2 2 0 0 1-2-2V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v3a2 2 0 0 1-2 2H2" />
-                <circle cx="7" cy="18" r="2" />
-                <circle cx="17" cy="18" r="2" />
-              </svg>
-            </div>
-          </div>
-          <div className="absolute -bottom-2 left-1/2 h-7 w-[90%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.6)] blur-xl" />
+          />
+          <div className="absolute -bottom-2 left-1/2 h-7 w-[92%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.6)] blur-xl" />
         </div>
+
 
 
         <div className="animate-rise text-center" style={{ animationDelay: "2.2s" }}>
