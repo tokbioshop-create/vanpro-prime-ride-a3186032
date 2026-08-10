@@ -63,68 +63,65 @@ function Splash() {
           </p>
         </div>
 
-
-        {/* Veículos entrando em cena — lado a lado */}
-        <div className="relative my-6 w-full px-2">
+        {/* Veículos entrando em cena — maior presença visual */}
+        <div className="relative my-5 w-full px-1">
           <div className="grid w-full grid-cols-3 items-end gap-2">
             <img
               src={onibus}
               alt="Ônibus executivo VanPro"
-              className="animate-drive-left h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
+              className="animate-drive-left h-28 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.15s" }}
             />
             <img
               src={minibus}
               alt="Micro-ônibus executivo VanPro"
-              className="animate-rise h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
+              className="animate-rise h-28 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.45s" }}
             />
             <img
               src={van}
               alt="Van executiva VanPro"
-              className="animate-drive-right h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
+              className="animate-drive-right h-28 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.75s" }}
             />
           </div>
-          <div className="absolute -bottom-1 left-1/2 h-5 w-[86%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.5)] blur-xl" />
+          <div className="absolute -bottom-1 left-1/2 h-5 w-[90%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.5)] blur-xl" />
         </div>
 
-
-
-
-
-        <div className="animate-rise text-center" style={{ animationDelay: "2.2s" }}>
-          <h2 className="text-[1.6rem] leading-tight font-extrabold text-[oklch(0.99_0_0)]">
-            Sua viagem, <span className="text-gold">compromisso real.</span>
-          </h2>
-          <p className="mx-auto mt-3 max-w-[20rem] text-sm leading-relaxed text-[oklch(0.8_0.02_265)]">
-            Vans, micro-ônibus e ônibus executivos com segurança e conforto total.
-
-          </p>
-          <div className="mt-5 flex items-center justify-center gap-1.5">
-            {[0, 1, 2, 3].map((i) => (
-              <span
-                key={i}
-                className={
-                  i === 2
-                    ? "bg-gold h-1 w-7 rounded-full"
-                    : "h-1 w-5 rounded-full bg-[oklch(1_0_0/0.22)]"
-                }
-              />
-            ))}
+        {/* Conteúdo institucional mais próximo do CTA */}
+        <div className="mt-auto">
+          <div className="animate-rise text-center" style={{ animationDelay: "2.2s" }}>
+            <h2 className="text-[1.65rem] leading-tight font-extrabold text-[oklch(0.99_0_0)]">
+              Sua viagem, <span className="text-gold">compromisso real.</span>
+            </h2>
+            <p className="mx-auto mt-2.5 max-w-[20rem] text-sm leading-relaxed text-[oklch(0.8_0.02_265)]">
+              Vans, micro-ônibus e ônibus executivos com segurança e conforto total.
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-1.5">
+              {[0, 1, 2, 3].map((i) => (
+                <span
+                  key={i}
+                  className={
+                    i === 2
+                      ? "bg-gold h-1 w-7 rounded-full"
+                      : "h-1 w-5 rounded-full bg-[oklch(1_0_0/0.22)]"
+                  }
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-auto pt-8">
-          <div className="animate-rise" style={{ animationDelay: "2.5s" }}>
-            <Link
-              to="/login"
-              className="press bg-gold text-navy relative flex h-15 w-full items-center justify-center gap-2.5 overflow-hidden rounded-full text-base font-extrabold shadow-[var(--shadow-gold)]"
-            >
-              <span className="animate-sheen absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-[oklch(1_0_0/0.4)]" />
-              Começar
-              <ArrowRight className="size-5" />
-            </Link>
+          <div className="pt-6">
+            <div className="animate-rise" style={{ animationDelay: "2.5s" }}>
+              <Link
+                to="/login"
+                className="press bg-gold text-navy relative flex h-15 w-full items-center justify-center gap-2.5 overflow-hidden rounded-full text-base font-extrabold shadow-[var(--shadow-gold)]"
+              >
+                <span className="animate-sheen absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-[oklch(1_0_0/0.4)]" />
+                Começar
+                <ArrowRight className="size-5" />
+              </Link>
+            </div>
           </div>
 
           <div
