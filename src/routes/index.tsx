@@ -3,7 +3,7 @@ import { ArrowRight, ShieldCheck, Clock, Star } from "lucide-react";
 import { VanProLogo } from "@/components/VanProLogo";
 import van from "@/assets/van.png";
 import minibus from "@/assets/minibus.png";
-import onibusImg from "@/assets/veiculos/onibus.png.asset.json";
+import onibus from "@/assets/onibus.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -65,27 +65,30 @@ function Splash() {
 
 
         {/* Veículos entrando em cena — lado a lado, em profundidade */}
-        <div className="relative my-6 flex w-full items-end justify-center">
-          <img
-            src={onibusImg.url}
-            alt="Ônibus executivo VanPro"
-            className="animate-drive-left relative z-10 -mr-10 w-[44%] origin-bottom scale-90 opacity-90 drop-shadow-[0_18px_26px_oklch(0_0_0/0.7)]"
-            style={{ animationDelay: "1.15s" }}
-          />
-          <img
-            src={minibus}
-            alt="Micro-ônibus executivo VanPro"
-            className="animate-rise relative z-20 -mr-10 w-[50%] origin-bottom scale-95 drop-shadow-[0_20px_30px_oklch(0_0_0/0.78)]"
-            style={{ animationDelay: "1.45s" }}
-          />
-          <img
-            src={van}
-            alt="Van executiva VanPro"
-            className="animate-drive-right relative z-30 w-[54%] origin-bottom drop-shadow-[0_24px_36px_oklch(0_0_0/0.85)]"
-            style={{ animationDelay: "1.75s" }}
-          />
-          <div className="absolute -bottom-2 left-1/2 h-7 w-[92%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.6)] blur-xl" />
+        <div className="relative my-6 w-full px-1">
+          <div className="flex w-full items-end justify-center">
+            <img
+              src={onibus}
+              alt="Ônibus executivo VanPro"
+              className="animate-drive-left relative z-10 -mr-[12%] w-[40%] origin-bottom object-contain opacity-85 drop-shadow-[0_16px_24px_oklch(0_0_0/0.7)]"
+              style={{ animationDelay: "1.15s" }}
+            />
+            <img
+              src={minibus}
+              alt="Micro-ônibus executivo VanPro"
+              className="animate-rise relative z-20 -mr-[12%] w-[44%] origin-bottom object-contain opacity-95 drop-shadow-[0_18px_28px_oklch(0_0_0/0.78)]"
+              style={{ animationDelay: "1.45s" }}
+            />
+            <img
+              src={van}
+              alt="Van executiva VanPro"
+              className="animate-drive-right relative z-30 w-[48%] origin-bottom object-contain drop-shadow-[0_22px_34px_oklch(0_0_0/0.85)]"
+              style={{ animationDelay: "1.75s" }}
+            />
+          </div>
+          <div className="absolute -bottom-1 left-1/2 h-6 w-[86%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.55)] blur-xl" />
         </div>
+
 
 
 
