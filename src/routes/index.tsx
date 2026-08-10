@@ -7,7 +7,7 @@ import minibus from "@/assets/minibus.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "VanPro — Reserve vans e micro-ônibus executivos" },
+      { title: "VanPro — Vans, Micro-ônibus e Ônibus Executivos" },
       {
         name: "description",
         content:
