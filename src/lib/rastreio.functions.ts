@@ -17,6 +17,26 @@ const compartilharSchema = z.object({
   compartilhando: z.boolean(),
 });
 
+export const excluirViagemRastreada = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => idSchema.parse(input))
+  .handler(async ({ data }) => {
+    const db = await admin();
+    // A tabela viagem_motorista tem ON DELETE CASCADE, mas posicoes_viagem também deve ser limpa se não tiver
+    const { error: erroPosicoes } = await db
+      .from("posicoes_viagem")
+      .delete()
+      .eq("viagem_id", data.id);
+    if (erroPosicoes) throw new Error(erroPosicoes.message);
+
+    const { error } = await db
+      .from("viagens_rastreadas")
+      .delete()
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
 const posicaoSchema = z.object({
   token: z.string().uuid(),
   latitude: z.number().min(-90).max(90),
