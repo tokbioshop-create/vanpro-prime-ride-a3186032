@@ -3,7 +3,7 @@ import { ArrowRight, ShieldCheck, Clock, Star } from "lucide-react";
 import { VanProLogo } from "@/components/VanProLogo";
 import van from "@/assets/van.png";
 import minibus from "@/assets/minibus.png";
-import onibusImg from "@/assets/veiculos/onibus.png.asset.json";
+import onibus from "@/assets/onibus.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
