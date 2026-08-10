@@ -238,7 +238,7 @@ function Acompanhar() {
           <>
 
 
-            <div className="track-card mt-3 p-4">
+            <div className="track-card relative z-10 mt-3 p-4">
               <div className="flex items-center gap-3">
                 <div className="bg-track-surface-2 text-track-accent flex size-12 shrink-0 items-center justify-center rounded-2xl">
                   <Radio className={`size-6 ${emAndamento ? "animate-pulse" : ""}`} />
@@ -254,6 +254,7 @@ function Acompanhar() {
                   </p>
                 </div>
               </div>
+
 
               <div className="mt-5">
                 <div className="relative h-1.5 rounded-full bg-[linear-gradient(90deg,var(--track-accent),var(--track-gold))]">

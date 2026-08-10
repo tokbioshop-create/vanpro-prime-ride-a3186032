@@ -39,10 +39,12 @@ export default function MapaRastreio({
       [-12.9777, -38.5016],
       12,
     );
-    L.tileLayer("https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap © CARTO",
+      subdomains: 'abcd'
     }).addTo(m);
+
 
     L.control.zoom({ position: "bottomright" }).addTo(m);
 

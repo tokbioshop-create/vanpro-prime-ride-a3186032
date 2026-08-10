@@ -23,7 +23,7 @@ export function FeedbackEmpresa() {
   }
 
   return (
-    <section className="mt-4 space-y-3 rounded-3xl bg-card p-4 shadow-[0_24px_50px_-18px_oklch(0.24_0.13_268/0.45)] ring-1 ring-border">
+    <section className="relative z-50 mt-4 space-y-3 rounded-3xl bg-card p-4 shadow-[0_24px_50px_-18px_oklch(0.24_0.13_268/0.45)] ring-1 ring-border">
       <div>
         <h2 className="text-sm font-extrabold text-foreground">Feedback para o empresário</h2>
         <p className="text-[11px] text-muted-foreground">

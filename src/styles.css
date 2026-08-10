@@ -279,10 +279,33 @@
    Mantemos tudo dentro do próprio contexto de empilhamento do container. */
 .leaflet-container {
   isolation: isolate;
-  z-index: 0;
+  z-index: 0 !important;
 }
 .leaflet-pane,
 .leaflet-top,
-.leaflet-bottom {
+.leaflet-bottom,
+.leaflet-proxy {
   z-index: 1 !important;
 }
+.leaflet-pane {
+  z-index: 1 !important;
+}
+.leaflet-map-pane {
+  z-index: 1 !important;
+}
+.leaflet-tile-pane {
+  z-index: 1 !important;
+}
+.leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+.leaflet-marker-pane {
+  z-index: 3 !important;
+}
+.leaflet-tooltip-pane {
+  z-index: 4 !important;
+}
+.leaflet-popup-pane {
+  z-index: 5 !important;
+}
+
