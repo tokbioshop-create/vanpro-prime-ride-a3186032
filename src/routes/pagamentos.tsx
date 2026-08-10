@@ -1,70 +1,37 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, Loader2, QrCode, ShieldCheck } from "lucide-react";
 import { brl } from "@/data/vanpro";
 import { usePainel } from "@/data/painel";
-import { Campo } from "@/components/Campo";
 import { useReserva } from "@/data/reserva";
 import { criarCobranca } from "@/lib/unicopag.functions";
-import checkoutHero from "@/assets/checkout-hero.png.asset.json";
 
 export const Route = createFileRoute("/pagamentos")({
   head: () => ({
     meta: [
       { title: "Pagamento — VanPro" },
-      {
-        name: "description",
-        content: "Pague sua reserva com PIX ou cartão e receba a confirmação da reserva na hora.",
-      },
-      { property: "og:title", content: "Pagamento — VanPro" },
-      {
-        property: "og:description",
-        content: "Confirmação da reserva imediatamente após o pagamento aprovado.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "description", content: "Finalize sua reserva VanPro com PIX ou cartão de forma segura." },
     ],
   }),
   component: Pagamentos,
 });
 
-const BRANCO = "#fefefe";
-
 type Metodo = "pix" | "credito" | "debito";
-
-/** Áreas clicáveis em % sobre o protótipo (852 x 1846). */
-const areas: Record<Metodo, { top: number; height: number }> = {
-  pix: { top: 53.5, height: 8.4 },
-  credito: { top: 62.6, height: 8.4 },
-  debito: { top: 71.8, height: 8.6 },
-};
 
 function Pagamentos() {
   const navigate = useNavigate();
   const { config } = usePainel();
   const reserva = useReserva();
-  const valor = reserva.total;
+  const cobrar = useServerFn(criarCobranca);
   const [metodo, setMetodo] = useState<Metodo>("pix");
-  const [pago, setPago] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [pix, setPix] = useState<string | null>(null);
-  const [formCartao, setFormCartao] = useState(false);
-  const [cartao, setCartao] = useState({
-    numero: "",
-    titular: "",
-    validade: "",
-    cvv: "",
-    parcelas: 1,
-  });
-  const cobrar = useServerFn(criarCobranca);
+  const [pago, setPago] = useState(false);
+  const [cartao, setCartao] = useState({ numero: "", titular: "", validade: "", cvv: "", parcelas: 1 });
 
-  function selecionar(id: Metodo) {
-    setMetodo(id);
-    setErro(null);
-    setFormCartao(id !== "pix");
-  }
+  const valor = reserva.total;
 
   function validarCartao() {
     const numero = cartao.numero.replace(/\D/g, "");
@@ -80,7 +47,6 @@ function Pagamentos() {
     if (metodo !== "pix") {
       const problema = validarCartao();
       if (problema) {
-        setFormCartao(true);
         setErro(problema);
         return;
       }
@@ -113,7 +79,6 @@ function Pagamentos() {
         setErro(r.erro ?? "Não foi possível iniciar o pagamento.");
         return;
       }
-      setFormCartao(false);
       if (r.pixCopiaECola) setPix(r.pixCopiaECola);
       if (r.linkPagamento) {
         window.location.href = r.linkPagamento;
@@ -121,243 +86,98 @@ function Pagamentos() {
       }
       if (r.status === "paid" || r.status === "approved") setPago(true);
     } catch (e) {
-      setErro(e instanceof Error ? e.message : "Falha na comunicação com a Unicopag.");
+      setErro(e instanceof Error ? e.message : "Falha na comunicação com o serviço de pagamento.");
     } finally {
       setCarregando(false);
     }
   }
 
+  if (pago) {
+    return (
+      <div className="min-h-screen bg-[oklch(0.14_0.06_268)] px-5 py-8 text-white">
+        <div className="mx-auto flex min-h-[80vh] max-w-md flex-col items-center justify-center text-center">
+          <div className="flex size-20 items-center justify-center rounded-full bg-emerald-500/15">
+            <CheckCircle2 className="size-12 text-emerald-400" />
+          </div>
+          <h1 className="mt-6 text-2xl font-extrabold">Reserva confirmada!</h1>
+          <p className="mt-2 text-sm text-white/65">Pagamento de {brl(valor)} aprovado com sucesso.</p>
+          <button onClick={() => navigate({ to: "/reservas" })} className="press mt-8 h-13 w-full rounded-2xl bg-gold font-extrabold text-navy">
+            Ver minhas reservas
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[oklch(0.14_0.06_268)]">
-      <div className="relative mx-auto w-full max-w-md" style={{ containerType: "inline-size" }}>
-        <img
-          src={checkoutHero.url}
-          alt={`Checkout VanPro: total de ${brl(valor)}, trajeto ${reserva.origem} para ${reserva.destino}, formas de pagamento e botão finalizar pagamento`}
-          className="block w-full select-none"
-        />
+    <div className="min-h-screen bg-[oklch(0.14_0.06_268)] text-white">
+      <div className="mx-auto min-h-screen max-w-md px-5 pb-8">
+        <header className="flex items-center gap-3 py-5">
+          <button onClick={() => navigate({ to: "/carrinho" })} aria-label="Voltar" className="press flex size-10 items-center justify-center rounded-full bg-white/10">
+            <ArrowLeft className="size-5" />
+          </button>
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.2em] text-gold uppercase">VanPro</p>
+            <h1 className="text-xl font-extrabold">Finalizar pagamento</h1>
+          </div>
+        </header>
 
-        {/* total real */}
-        <Campo left={5.5} top={32.4} width={53} height={7} bg={BRANCO}>
-          <span className="flex items-baseline gap-[1.5cqw]">
-            <span className="font-bold" style={{ fontSize: "5.2cqw", color: "#14152f" }}>R$</span>
-            <span className="font-extrabold" style={{ fontSize: "8.4cqw", color: "#1a2cf0" }}>
-              {brl(valor).replace("R$", "").trim()}
-            </span>
-          </span>
-        </Campo>
+        <section className="rounded-3xl bg-white/[0.06] p-5 ring-1 ring-white/10">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs text-white/50">Total da reserva</p>
+              <p className="mt-1 text-3xl font-black text-gold">{brl(valor)}</p>
+            </div>
+            <div className="rounded-2xl bg-gold/10 p-3 text-gold">
+              <ShieldCheck className="size-7" />
+            </div>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-3 text-xs">
+            <div className="rounded-2xl bg-black/15 p-3"><span className="block text-white/45">Origem</span><strong className="mt-1 block">{reserva.origem}</strong></div>
+            <div className="rounded-2xl bg-black/15 p-3"><span className="block text-white/45">Destino</span><strong className="mt-1 block">{reserva.destino}</strong></div>
+            <div className="rounded-2xl bg-black/15 p-3"><span className="block text-white/45">Horário</span><strong className="mt-1 block">{reserva.horario}</strong></div>
+            <div className="rounded-2xl bg-black/15 p-3"><span className="block text-white/45">Passageiros</span><strong className="mt-1 block">{reserva.passageiros}</strong></div>
+          </div>
+        </section>
 
-        {/* trajeto, horário, assento e passageiros reais */}
-        <Campo left={11.5} top={41.9} width={34} height={4.4} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
-            {reserva.origem}
-          </span>
-          <span className="font-semibold" style={{ fontSize: "2.7cqw", color: "#14152f", lineHeight: 1.35 }}>
-            → {reserva.destino}
-          </span>
-        </Campo>
-        <Campo left={45.5} top={41.9} width={14} height={2.2} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.horario}</span>
-        </Campo>
-        <Campo left={64} top={43.9} width={12} height={2.1} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.assentos}</span>
-        </Campo>
-        <Campo left={84} top={41.9} width={12} height={2.2} bg={BRANCO}>
-          <span className="font-semibold" style={{ fontSize: "3.1cqw", color: "#14152f" }}>{reserva.passageiros}</span>
-        </Campo>
+        <section className="mt-5">
+          <h2 className="text-sm font-extrabold">Escolha a forma de pagamento</h2>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <button onClick={() => { setMetodo("pix"); setErro(null); }} className={`press rounded-2xl p-3 text-center ring-1 ${metodo === "pix" ? "bg-gold text-navy ring-gold" : "bg-white/[0.06] text-white ring-white/10"}`}>
+              <QrCode className="mx-auto size-6" /><span className="mt-2 block text-xs font-bold">PIX</span>
+            </button>
+            <button onClick={() => { setMetodo("credito"); setErro(null); }} className={`press rounded-2xl p-3 text-center ring-1 ${metodo === "credito" ? "bg-gold text-navy ring-gold" : "bg-white/[0.06] text-white ring-white/10"}`}>
+              <CreditCard className="mx-auto size-6" /><span className="mt-2 block text-xs font-bold">Crédito</span>
+            </button>
+            <button onClick={() => { setMetodo("debito"); setErro(null); }} className={`press rounded-2xl p-3 text-center ring-1 ${metodo === "debito" ? "bg-gold text-navy ring-gold" : "bg-white/[0.06] text-white ring-white/10"}`}>
+              <CreditCard className="mx-auto size-6" /><span className="mt-2 block text-xs font-bold">Débito</span>
+            </button>
+          </div>
+        </section>
 
-        {/* voltar */}
-        <button
-          type="button"
-          aria-label="Voltar para o carrinho"
-          onClick={() => navigate({ to: "/carrinho" })}
-          className="press absolute rounded-full"
-          style={{ left: "2%", top: "3.4%", width: "10%", height: "3.4%" }}
-        />
+        {metodo !== "pix" && (
+          <section className="mt-4 space-y-3 rounded-3xl bg-white/[0.06] p-4 ring-1 ring-white/10">
+            <input inputMode="numeric" autoComplete="cc-number" placeholder="Número do cartão" value={cartao.numero} onChange={(e) => setCartao((c) => ({ ...c, numero: e.target.value.replace(/\D/g, "").slice(0, 19) }))} className="w-full rounded-2xl bg-black/20 px-4 py-3.5 text-sm outline-none ring-1 ring-white/10 focus:ring-gold" />
+            <input autoComplete="cc-name" placeholder="Nome impresso no cartão" value={cartao.titular} onChange={(e) => setCartao((c) => ({ ...c, titular: e.target.value }))} className="w-full rounded-2xl bg-black/20 px-4 py-3.5 text-sm outline-none ring-1 ring-white/10 focus:ring-gold" />
+            <div className="flex gap-3">
+              <input inputMode="numeric" autoComplete="cc-exp" placeholder="MM/AA" value={cartao.validade} onChange={(e) => setCartao((c) => ({ ...c, validade: e.target.value.replace(/\D/g, "").slice(0, 4).replace(/^(\d{2})(\d)/, "$1/$2") }))} className="w-1/2 rounded-2xl bg-black/20 px-4 py-3.5 text-sm outline-none ring-1 ring-white/10 focus:ring-gold" />
+              <input inputMode="numeric" autoComplete="cc-csc" placeholder="CVV" value={cartao.cvv} onChange={(e) => setCartao((c) => ({ ...c, cvv: e.target.value.replace(/\D/g, "").slice(0, 4) }))} className="w-1/2 rounded-2xl bg-black/20 px-4 py-3.5 text-sm outline-none ring-1 ring-white/10 focus:ring-gold" />
+            </div>
+            {metodo === "credito" && <select value={cartao.parcelas} onChange={(e) => setCartao((c) => ({ ...c, parcelas: Number(e.target.value) }))} className="w-full rounded-2xl bg-black/20 px-4 py-3.5 text-sm outline-none ring-1 ring-white/10">
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}x de {brl(valor / n)}</option>)}
+            </select>}
+          </section>
+        )}
 
-        {/* formas de pagamento */}
-        {(Object.keys(areas) as Metodo[]).map((id) => (
-          <button
-            key={id}
-            type="button"
-            aria-label={`Selecionar ${id}`}
-            aria-pressed={metodo === id}
-            onClick={() => selecionar(id)}
-            className={`press absolute rounded-2xl transition ${
-              metodo === id ? "ring-2 ring-primary" : ""
-            }`}
-            style={{
-              left: "4%",
-              width: "92%",
-              top: `${areas[id].top}%`,
-              height: `${areas[id].height}%`,
-            }}
-          />
-        ))}
+        {metodo === "pix" && <div className="mt-4 rounded-3xl bg-gold/10 p-4 text-sm text-white/75 ring-1 ring-gold/20">Você receberá o código PIX para copiar e pagar no aplicativo do seu banco.</div>}
+        {erro && <p className="mt-4 rounded-2xl bg-red-500/10 p-3 text-xs font-semibold text-red-300 ring-1 ring-red-500/20">{erro}</p>}
 
-        {/* finalizar pagamento */}
-        <button
-          type="button"
-          aria-label={`Finalizar pagamento de ${brl(valor)}`}
-          onClick={pagar}
-          disabled={carregando}
-          className="press absolute flex items-center justify-center rounded-2xl"
-          style={{ left: "7%", top: "86.8%", width: "86%", height: "7%" }}
-        >
-          {carregando && (
-            <span className="flex h-full w-full items-center justify-center rounded-2xl bg-[oklch(0.14_0.06_268/0.55)]">
-              <Loader2 className="size-6 animate-spin text-primary-foreground" />
-            </span>
-          )}
+        <button onClick={pagar} disabled={carregando} className="press mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gold text-base font-extrabold text-navy shadow-[var(--shadow-gold)]">
+          {carregando ? <Loader2 className="size-5 animate-spin" /> : `Pagar ${brl(valor)}`}
         </button>
+        <p className="mt-4 text-center text-[11px] text-white/45">Pagamento seguro · Seus dados de cartão não são armazenados pelo VanPro.</p>
 
-        {formCartao && !pago && (
-          <div className="fixed inset-0 z-[80] mx-auto flex max-w-md items-end justify-center bg-[oklch(0.14_0.06_268/0.65)] p-4">
-            <div className="card-elevated w-full space-y-3 p-5 text-left">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-extrabold">
-                  Cartão de {metodo === "credito" ? "crédito" : "débito"}
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setFormCartao(false)}
-                  className="press text-xs font-bold text-muted-foreground"
-                >
-                  Fechar
-                </button>
-              </div>
-
-              <input
-                inputMode="numeric"
-                autoComplete="cc-number"
-                placeholder="Número do cartão"
-                value={cartao.numero}
-                onChange={(e) =>
-                  setCartao((c) => ({
-                    ...c,
-                    numero: e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 19)
-                      .replace(/(.{4})/g, "$1 ")
-                      .trim(),
-                  }))
-                }
-                className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
-              />
-              <input
-                autoComplete="cc-name"
-                placeholder="Nome impresso no cartão"
-                value={cartao.titular}
-                onChange={(e) => setCartao((c) => ({ ...c, titular: e.target.value.slice(0, 120) }))}
-                className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
-              />
-              <div className="flex gap-3">
-                <input
-                  inputMode="numeric"
-                  autoComplete="cc-exp"
-                  placeholder="MM/AA"
-                  value={cartao.validade}
-                  onChange={(e) => {
-                    const d = e.target.value.replace(/\D/g, "").slice(0, 4);
-                    setCartao((c) => ({
-                      ...c,
-                      validade: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d,
-                    }));
-                  }}
-                  className="w-1/2 rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
-                />
-                <input
-                  inputMode="numeric"
-                  autoComplete="cc-csc"
-                  placeholder="CVV"
-                  value={cartao.cvv}
-                  onChange={(e) =>
-                    setCartao((c) => ({ ...c, cvv: e.target.value.replace(/\D/g, "").slice(0, 4) }))
-                  }
-                  className="w-1/2 rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
-                />
-              </div>
-              {metodo === "credito" && (
-                <select
-                  value={cartao.parcelas}
-                  onChange={(e) => setCartao((c) => ({ ...c, parcelas: Number(e.target.value) }))}
-                  className="w-full rounded-xl bg-secondary px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/35"
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
-                    <option key={n} value={n}>
-                      {n}x de {brl(valor / n)}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              {erro && <p className="text-xs text-destructive">{erro}</p>}
-
-              <button
-                type="button"
-                onClick={pagar}
-                disabled={carregando}
-                className="press bg-brand flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-extrabold text-primary-foreground"
-              >
-                {carregando ? <Loader2 className="size-5 animate-spin" /> : `Pagar ${brl(valor)}`}
-              </button>
-              <p className="text-[11px] text-muted-foreground">
-                Pagamento processado pela Unicopag. Não guardamos os dados do seu cartão.
-              </p>
-            </div>
-          </div>
-        )}
-
-
-        {!formCartao && (erro || pix || pago) && (
-          <div className="absolute inset-0 flex items-end justify-center bg-[oklch(0.14_0.06_268/0.6)] p-4">
-            <div className="card-elevated w-full p-5 text-center">
-              {pago && (
-                <>
-                  <CheckCircle2 className="mx-auto size-12 text-success" />
-                  <h2 className="mt-3 text-base font-bold">Reserva confirmada!</h2>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Pagamento de {brl(valor)} aprovado.
-                  </p>
-                  <button
-                    onClick={() => navigate({ to: "/reservas" })}
-                    className="press bg-brand mt-4 h-12 w-full rounded-xl text-sm font-bold text-primary-foreground"
-                  >
-                    Ver minhas reservas
-                  </button>
-                </>
-              )}
-              {!pago && pix && (
-                <>
-                  <h2 className="text-sm font-bold">Copie o código PIX</h2>
-                  <button
-                    onClick={() => navigator.clipboard?.writeText(pix)}
-                    className="press mt-3 w-full rounded-xl bg-surface-2 px-4 py-3 font-mono text-[11px] break-all"
-                  >
-                    {pix}
-                  </button>
-                  <button
-                    onClick={() => setPix(null)}
-                    className="press mt-3 h-11 w-full rounded-xl bg-surface-2 text-sm font-semibold"
-                  >
-                    Fechar
-                  </button>
-                </>
-              )}
-              {!pago && !pix && erro && (
-                <>
-                  <p className="text-xs text-destructive">{erro}</p>
-                  <button
-                    onClick={() => setErro(null)}
-                    className="press mt-3 h-11 w-full rounded-xl bg-surface-2 text-sm font-semibold"
-                  >
-                    Fechar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+        {pix && <div className="mt-5 rounded-3xl bg-white/[0.06] p-4 ring-1 ring-white/10"><h2 className="text-sm font-extrabold">PIX copia e cola</h2><button onClick={() => navigator.clipboard?.writeText(pix)} className="mt-3 w-full rounded-2xl bg-black/20 p-3 text-left font-mono text-[10px] break-all text-white/70">{pix}</button><button onClick={() => setPix(null)} className="press mt-3 h-11 w-full rounded-2xl bg-white/10 text-sm font-bold">Fechar</button></div>}
       </div>
     </div>
   );
