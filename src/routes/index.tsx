@@ -7,7 +7,7 @@ import minibus from "@/assets/minibus.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "VanPro — Reserve vans e micro-ônibus executivos" },
+      { title: "VanPro — Vans, Micro-ônibus e Ônibus Executivos" },
       {
         name: "description",
         content:
@@ -50,24 +50,27 @@ function Splash() {
 
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-6 pt-[max(2.25rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="animate-rise flex flex-col items-center" style={{ animationDelay: "1.9s" }}>
-          <VanProLogo size={62} variant="outline" />
-          <h1 className="mt-4 text-[3.35rem] leading-none font-extrabold tracking-tight">
-            <span className="text-gold">Van</span>
-            <span className="text-[oklch(0.99_0_0)]">Pro</span>
-          </h1>
-          <p className="mt-2 text-sm font-medium tracking-[0.14em] text-[oklch(0.85_0.02_265)]">
+          <div className="flex items-center gap-3">
+            <VanProLogo size={52} variant="outline" />
+            <h1 className="text-[2.8rem] leading-none font-extrabold tracking-tight">
+              <span className="text-gold">Van</span>
+              <span className="text-[oklch(0.99_0_0)]">Pro</span>
+            </h1>
+          </div>
+          <p className="mt-1 text-[10px] font-medium tracking-[0.2em] text-[oklch(0.85_0.02_265)] uppercase">
             Transporte Executivo
           </p>
         </div>
 
+
         {/* Veículos entrando em cena */}
-        <div className="relative my-8 flex w-full items-end justify-center">
+        <div className="relative my-6 flex w-full items-end justify-center">
           <img
             src={van}
             alt="Van executiva VanPro"
             width={1024}
             height={640}
-            className="animate-drive-left -mr-8 w-[58%] drop-shadow-[0_26px_34px_oklch(0_0_0/0.75)]"
+            className="animate-drive-left relative z-20 -mr-16 w-[48%] drop-shadow-[0_20px_30px_oklch(0_0_0/0.75)]"
             style={{ animationDelay: "1.15s" }}
           />
           <img
@@ -75,19 +78,33 @@ function Splash() {
             alt="Micro-ônibus executivo VanPro"
             width={1024}
             height={640}
-            className="animate-drive-right w-[62%] drop-shadow-[0_26px_34px_oklch(0_0_0/0.75)]"
+            className="animate-rise relative z-30 w-[54%] drop-shadow-[0_22px_36px_oklch(0_0_0/0.85)]"
             style={{ animationDelay: "1.45s" }}
           />
-          <div className="absolute -bottom-2 left-1/2 h-7 w-4/5 -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.6)] blur-xl" />
+          <div
+            className="animate-drive-right relative z-10 -ml-16 flex w-[48%] items-end justify-center drop-shadow-[0_20px_30px_oklch(0_0_0/0.75)]"
+            style={{ animationDelay: "1.75s" }}
+          >
+            <div className="bg-brand flex size-24 items-center justify-center rounded-3xl p-4">
+              <svg viewBox="0 0 24 24" fill="none" className="text-primary-foreground size-full" stroke="currentColor" strokeWidth="1.5">
+                <path d="M4 18h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2z" />
+                <path d="M22 9h-6a2 2 0 0 1-2-2V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v3a2 2 0 0 1-2 2H2" />
+                <circle cx="7" cy="18" r="2" />
+                <circle cx="17" cy="18" r="2" />
+              </svg>
+            </div>
+          </div>
+          <div className="absolute -bottom-2 left-1/2 h-7 w-[90%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.6)] blur-xl" />
         </div>
+
 
         <div className="animate-rise text-center" style={{ animationDelay: "2.2s" }}>
           <h2 className="text-[1.6rem] leading-tight font-extrabold text-[oklch(0.99_0_0)]">
-            Sua viagem, <span className="text-gold">nosso compromisso.</span>
+            Sua viagem, <span className="text-gold">compromisso real.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-[20rem] text-sm leading-relaxed text-[oklch(0.8_0.02_265)]">
-            Reserve vans e micro-ônibus com segurança, conforto e pontualidade. Do seu jeito, na
-            hora certa.
+            Vans, micro-ônibus e ônibus executivos com segurança e conforto total.
+
           </p>
           <div className="mt-5 flex items-center justify-center gap-1.5">
             {[0, 1, 2, 3].map((i) => (
