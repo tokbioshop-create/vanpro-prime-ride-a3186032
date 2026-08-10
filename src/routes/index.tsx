@@ -64,30 +64,31 @@ function Splash() {
         </div>
 
 
-        {/* Veículos entrando em cena — lado a lado, em profundidade */}
-        <div className="relative my-6 w-full px-1">
-          <div className="flex w-full items-end justify-center">
+        {/* Veículos entrando em cena — lado a lado */}
+        <div className="relative my-6 w-full px-2">
+          <div className="grid w-full grid-cols-3 items-end gap-2">
             <img
               src={onibus}
               alt="Ônibus executivo VanPro"
-              className="animate-drive-left relative z-10 -mr-[12%] w-[40%] origin-bottom object-contain opacity-85 drop-shadow-[0_16px_24px_oklch(0_0_0/0.7)]"
+              className="animate-drive-left h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.15s" }}
             />
             <img
               src={minibus}
               alt="Micro-ônibus executivo VanPro"
-              className="animate-rise relative z-20 -mr-[12%] w-[44%] origin-bottom object-contain opacity-95 drop-shadow-[0_18px_28px_oklch(0_0_0/0.78)]"
+              className="animate-rise h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.45s" }}
             />
             <img
               src={van}
               alt="Van executiva VanPro"
-              className="animate-drive-right relative z-30 w-[48%] origin-bottom object-contain drop-shadow-[0_22px_34px_oklch(0_0_0/0.85)]"
+              className="animate-drive-right h-16 w-full origin-bottom object-contain drop-shadow-[0_12px_20px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.75s" }}
             />
           </div>
-          <div className="absolute -bottom-1 left-1/2 h-6 w-[86%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.55)] blur-xl" />
+          <div className="absolute -bottom-1 left-1/2 h-5 w-[86%] -translate-x-1/2 rounded-[100%] bg-[oklch(0_0_0/0.5)] blur-xl" />
         </div>
+
 
 
 

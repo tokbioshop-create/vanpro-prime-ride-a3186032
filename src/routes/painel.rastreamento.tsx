@@ -282,23 +282,26 @@ function PainelRastreamento() {
                 >
                   <Square className="size-4" />
                 </button>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (confirm("AVISO: Isso excluirá permanentemente a viagem e todo o histórico de posições. Deseja excluir?")) {
-                      await excluir({ data: { id: v.id } });
-                      await recarregar();
-                    }
-                  }}
-                  className="press flex h-11 items-center justify-center rounded-xl bg-surface-2 px-4 text-xs font-bold text-destructive"
-                  aria-label="Excluir viagem"
-                  title="Excluir Permanentemente"
-                >
-                  <Trash2 className="size-4" />
-                </button>
               </div>
 
             )}
+
+            <button
+              type="button"
+              onClick={async () => {
+                if (confirm("AVISO: Isso excluirá permanentemente a viagem e todo o histórico de posições. Deseja excluir?")) {
+                  await excluir({ data: { id: v.id } });
+                  await recarregar();
+                }
+              }}
+              className="press mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-surface-2 text-xs font-bold text-destructive"
+              aria-label="Excluir viagem"
+              title="Excluir permanentemente"
+            >
+              <Trash2 className="size-4" />
+              Excluir viagem
+            </button>
+
 
             {v.token && !v.encerrada && (
               <button
