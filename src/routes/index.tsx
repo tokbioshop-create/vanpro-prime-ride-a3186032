@@ -65,24 +65,24 @@ function Splash() {
 
 
         {/* Veículos entrando em cena — lado a lado, em profundidade */}
-        <div className="relative my-6 w-full overflow-hidden">
+        <div className="relative my-6 w-full px-1">
           <div className="flex w-full items-end justify-center">
             <img
               src={onibus}
               alt="Ônibus executivo VanPro"
-              className="animate-drive-left relative z-10 -mr-[12%] w-[46%] origin-bottom object-contain opacity-85 drop-shadow-[0_16px_24px_oklch(0_0_0/0.7)]"
+              className="animate-drive-left relative z-10 -mr-[12%] w-[40%] origin-bottom object-contain opacity-85 drop-shadow-[0_16px_24px_oklch(0_0_0/0.7)]"
               style={{ animationDelay: "1.15s" }}
             />
             <img
               src={minibus}
               alt="Micro-ônibus executivo VanPro"
-              className="animate-rise relative z-20 -mr-[12%] w-[50%] origin-bottom object-contain opacity-95 drop-shadow-[0_18px_28px_oklch(0_0_0/0.78)]"
+              className="animate-rise relative z-20 -mr-[12%] w-[44%] origin-bottom object-contain opacity-95 drop-shadow-[0_18px_28px_oklch(0_0_0/0.78)]"
               style={{ animationDelay: "1.45s" }}
             />
             <img
               src={van}
               alt="Van executiva VanPro"
-              className="animate-drive-right relative z-30 w-[56%] origin-bottom object-contain drop-shadow-[0_22px_34px_oklch(0_0_0/0.85)]"
+              className="animate-drive-right relative z-30 w-[48%] origin-bottom object-contain drop-shadow-[0_22px_34px_oklch(0_0_0/0.85)]"
               style={{ animationDelay: "1.75s" }}
             />
           </div>
