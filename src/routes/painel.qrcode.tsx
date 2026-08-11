@@ -28,10 +28,15 @@ function PainelQr() {
     return () => { ativo = false; };
   }, [config]);
 
-  function baixar() {
-    if (!svgRef.current || !url) return;
+  function qrBlob() {
+    if (!svgRef.current) return null;
     const svg = new XMLSerializer().serializeToString(svgRef.current);
-    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    return new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+  }
+
+  function baixar() {
+    const blob = qrBlob();
+    if (!blob) return;
     const href = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = href;
@@ -50,8 +55,15 @@ function PainelQr() {
   async function compartilhar() {
     if (!url) return;
     try {
-      if (navigator.share) await navigator.share({ title: config.empresa.nome, text: `Acesse ${config.empresa.nome} no VanPro`, url });
-      else await copiar();
+      const blob = qrBlob();
+      const file = blob ? new File([blob], `vanpro-qrcode-${config.empresa.sigla || "empresa"}.svg`, { type: "image/svg+xml" }) : null;
+      if (navigator.share && file && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: config.empresa.nome, text: `QR Code de ${config.empresa.nome}`, files: [file] });
+      } else if (navigator.share) {
+        await navigator.share({ title: config.empresa.nome, text: `Acesse ${config.empresa.nome} no VanPro`, url });
+      } else {
+        await copiar();
+      }
     } catch {
       // cancelamento do compartilhamento não é erro
     }
@@ -63,7 +75,6 @@ function PainelQr() {
         <div className="flex min-h-[252px] min-w-[252px] items-center justify-center rounded-2xl bg-white p-4 shadow-[var(--shadow-card)] ring-1 ring-border">
           {url ? <QRCodeSVG ref={svgRef} value={url} size={220} level="H" bgColor="#ffffff" fgColor="#111827" includeMargin /> : <div className="px-8 text-center text-xs text-muted-foreground">{sincronizando ? "Gerando QR Code…" : "Não foi possível gerar o QR Code."}</div>}
         </div>
-
         <p className="mt-5 text-sm font-bold">{config.empresa.nome}</p>
         <p className="text-[11px] text-muted-foreground">Identificador público: e-mail da conta</p>
 
@@ -76,10 +87,8 @@ function PainelQr() {
           </div>
           <a href={url} target="_blank" rel="noreferrer" className="press bg-brand mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold text-primary-foreground shadow-[var(--shadow-brand)]"><ExternalLink className="size-4" /> Abrir página pública</a>
         </> : null}
-
         <p className="mt-3 text-center text-[10px] text-muted-foreground">{sincronizando ? "Identificando a conta e criando o endereço público…" : "QR Code atualizado automaticamente com os dados públicos da empresa."}</p>
       </div>
-
       <p className="mt-4 px-1 text-[11px] leading-relaxed text-muted-foreground">O QR Code abre somente a página pública da empresa. Ele não dá acesso ao painel administrativo.</p>
     </AppScreen>
   );
