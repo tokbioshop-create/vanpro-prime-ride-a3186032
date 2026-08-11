@@ -1,78 +1,86 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Star } from "lucide-react";
+import { UserRound, IdCard, Mail, Phone, MapPin, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
 import { AppScreen } from "@/components/AppScreen";
-import { useAvaliacoes, usePainel } from "@/data/painel";
-import { empresas } from "@/data/vanpro";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/painel/avaliacoes")({
   head: () => ({
     meta: [
-      { title: "Avaliações — Painel VanPro" },
-      {
-        name: "description",
-        content: "Veja os elogios e as estrelas que os clientes deram para a sua empresa no VanPro.",
-      },
-      { property: "og:title", content: "Avaliações — Painel VanPro" },
-      { property: "og:description", content: "Reputação da sua transportadora em tempo real." },
+      { title: "Perfil do empresário — Painel VanPro" },
+      { name: "description", content: "Dados privados do cadastro empresarial VanPro." },
     ],
   }),
-  component: PainelAvaliacoes,
+  component: PerfilEmpresario,
 });
 
-function PainelAvaliacoes() {
-  const { config } = usePainel();
-  const { lista } = useAvaliacoes();
-  const base = empresas[0]!.nota;
-  const media = lista.length
-    ? (lista.reduce((s, a) => s + a.estrelas, 0) / lista.length).toFixed(1)
-    : base.toFixed(1);
+type CadastroEmpresario = {
+  nome_completo?: string;
+  documento?: string;
+  contato?: string;
+  endereco?: string;
+  termos_aceitos?: boolean;
+};
+
+function PerfilEmpresario() {
+  const [email, setEmail] = useState("");
+  const [dados, setDados] = useState<CadastroEmpresario>({});
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    let ativo = true;
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (!ativo) return;
+      if (error || !data.user) {
+        toast.error("Não foi possível carregar seu perfil.");
+      } else {
+        setEmail(data.user.email ?? "");
+        setDados((data.user.user_metadata ?? {}) as CadastroEmpresario);
+      }
+      setCarregando(false);
+    });
+    return () => { ativo = false; };
+  }, []);
 
   return (
-    <AppScreen title="Avaliações" subtitle={config.empresa.nome} back="/painel">
-      <div className="card-elevated flex items-center justify-between p-5">
-        <div>
-          <p className="text-[11px] text-muted-foreground">Nota média</p>
-          <p className="text-3xl font-extrabold text-primary">{media}</p>
-        </div>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Star
-              key={n}
-              className={`size-5 ${n <= Math.round(Number(media)) ? "fill-[var(--gold)] text-[var(--gold)]" : "text-muted-foreground/40"}`}
-            />
-          ))}
-        </div>
-      </div>
-
-      <p className="mt-6 mb-3 text-xs font-bold tracking-wide text-muted-foreground uppercase">
-        Feedback dos clientes
-      </p>
-
-      {lista.length === 0 ? (
-        <p className="card-elevated p-4 text-xs leading-relaxed text-muted-foreground">
-          Ainda não há feedbacks. Os clientes avaliam sua empresa pelo botão “Avaliar com estrelas”
-          na página da empresa.
-        </p>
+    <AppScreen title="Perfil do empresário" subtitle="Dados privados do cadastro" back="/painel">
+      {carregando ? (
+        <div className="card-elevated p-5 text-sm text-muted-foreground">Carregando seus dados...</div>
       ) : (
-        <div className="space-y-3">
-          {lista.map((a, i) => (
-            <article key={i} className="card-elevated p-4">
-              <div className="flex items-center justify-between">
-                <span className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star
-                      key={n}
-                      className={`size-3.5 ${n <= a.estrelas ? "fill-[var(--gold)] text-[var(--gold)]" : "text-muted-foreground/40"}`}
-                    />
-                  ))}
-                </span>
-                <span className="text-[11px] text-muted-foreground">{a.data}</span>
-              </div>
-              {a.texto && <p className="mt-2 text-sm">{a.texto}</p>}
-            </article>
-          ))}
-        </div>
+        <>
+          <div className="card-elevated flex items-center gap-4 p-5">
+            <span className="flex size-16 items-center justify-center rounded-full bg-brand text-xl font-bold text-primary-foreground">
+              {(dados.nome_completo ?? "E").split(/\s+/).slice(0, 2).map((p) => p[0]).join("").toUpperCase()}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-base font-bold">{dados.nome_completo || "Empresário"}</p>
+              <p className="text-[11px] text-muted-foreground">Cadastro empresarial VanPro</p>
+            </div>
+          </div>
+
+          <div className="card-elevated mt-4 divide-y divide-border">
+            <Row icon={UserRound} label="Nome completo" value={dados.nome_completo || "Não informado"} />
+            <Row icon={IdCard} label="CPF ou CNPJ" value={dados.documento || "Não informado"} />
+            <Row icon={Mail} label="E-mail" value={email || "Não informado"} />
+            <Row icon={Phone} label="Contato" value={dados.contato || "Não informado"} />
+            <Row icon={MapPin} label="Endereço" value={dados.endereco || "Não informado"} />
+          </div>
+
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-primary/15 bg-primary/5 p-4">
+            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
+            <div>
+              <p className="text-xs font-bold">Área privada</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">Estas informações pertencem ao seu cadastro e ficam disponíveis somente após sua autenticação no painel. Elas não são publicadas para clientes.</p>
+              <p className="mt-2 text-[11px] font-semibold text-primary">Termos aceitos: {dados.termos_aceitos ? "Sim" : "Não registrado"}</p>
+            </div>
+          </div>
+        </>
       )}
     </AppScreen>
   );
+}
+
+function Row({ icon: Icon, label, value }: { icon: typeof Mail; label: string; value: string }) {
+  return <div className="flex items-start gap-3 p-4"><Icon className="mt-0.5 size-4.5 shrink-0 text-primary" /><span className="flex-1 text-xs text-muted-foreground">{label}</span><span className="max-w-[62%] text-right text-sm font-semibold break-words">{value}</span></div>;
 }
