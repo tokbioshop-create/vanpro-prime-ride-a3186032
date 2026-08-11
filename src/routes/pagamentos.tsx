@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, CheckCircle2, ChevronRight, CreditCard, Loader2, LockKeyhole, QrCode } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight, CreditCard, Loader2, LockKeyhole } from "lucide-react";
 import { brl } from "@/data/vanpro";
 import { usePainel } from "@/data/painel";
 import { useReserva } from "@/data/reserva";
@@ -131,70 +131,62 @@ function Pagamentos() {
   }
 
   const optionClass = (selected: boolean) =>
-    `press flex min-h-[72px] w-full items-center gap-4 rounded-[22px] border bg-white px-5 text-left shadow-[0_5px_18px_rgba(2,12,66,0.05)] transition ${
+    `press flex min-h-[58px] w-full items-center gap-3 rounded-[19px] border bg-white px-4 text-left shadow-[0_4px_14px_rgba(2,12,66,0.045)] transition ${
       selected ? "border-[#16a085] ring-1 ring-[#16a085]" : "border-slate-100"
     }`;
 
   return (
     <div className="min-h-screen bg-white text-[#071342]">
       <div className="mx-auto w-full max-w-md overflow-hidden bg-white pb-8">
-        <header className="relative h-[255px] overflow-hidden bg-[#06113b]">
+        <header className="relative h-[270px] overflow-hidden bg-[#06113b]">
           <img src={carrinhoHero.url} alt="VanMox — sua viagem" className="absolute inset-0 h-full w-full object-cover object-top" />
-          <div className="absolute left-3 top-3 z-20">
-            <button onClick={() => navigate({ to: "/carrinho" })} aria-label="Voltar ao carrinho" className="press flex size-10 items-center justify-center rounded-full bg-white/90 text-[#071342] shadow-lg backdrop-blur-sm ring-1 ring-white/60">
-              <ArrowLeft className="size-5" />
-            </button>
-          </div>
+          <button onClick={() => navigate({ to: "/carrinho" })} aria-label="Voltar ao carrinho" className="absolute left-3 top-3 z-20 flex size-10 items-center justify-center rounded-full bg-transparent text-white">
+            <ArrowLeft className="size-6" />
+          </button>
         </header>
 
         <main className="relative px-4">
-          <section className="relative z-10 -mt-4 rounded-[25px] bg-white px-5 pb-5 pt-4 shadow-[0_10px_28px_rgba(2,12,66,0.12)]">
+          <section className="relative z-10 -mt-6 rounded-[25px] bg-white px-5 pb-5 pt-4 shadow-[0_10px_28px_rgba(2,12,66,0.12)]">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold text-slate-500">Total da corrida</p>
-                <p className="mt-0.5 text-[34px] font-black leading-none tracking-tight text-[#0b2be3]">
-                  <span className="mr-1 text-[21px] text-[#071342]">R$</span>{brl(valor).replace("R$", "").trim()}
-                </p>
+                <p className="mt-1 text-[34px] font-black leading-none tracking-tight text-[#0b2be3]"><span className="mr-1 text-[21px] text-[#071342]">R$</span>{brl(valor).replace("R$", "").trim()}</p>
               </div>
               <div className="mt-0.5 flex size-[76px] items-center justify-center overflow-hidden rounded-2xl bg-slate-50">
                 <img src={carrinhoHero.url} alt="Veículo da viagem" className="h-full w-full scale-[2.3] object-cover object-[72%_58%]" />
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-[1.25fr_.75fr_.75fr] gap-3 text-[10px] text-[#071342]">
-              <div className="min-w-0">
-                <span className="block font-bold truncate">⌾ {reserva.origem}</span>
-                <span className="mt-1 block truncate pl-4 text-[9px] font-medium">→ {reserva.destino}</span>
-              </div>
-              <div className="border-l border-slate-200 pl-3"><span className="block text-slate-400">Horário</span><strong className="mt-1 block text-xs">{reserva.horario}</strong></div>
-              <div className="border-l border-slate-200 pl-3"><span className="block text-slate-400">Passageiro</span><strong className="mt-1 block text-xs">{reserva.passageiros}</strong></div>
+            <div className="mt-4 grid grid-cols-[1.35fr_.7fr_.75fr_.75fr] gap-2 text-[9px] text-[#071342]">
+              <div className="min-w-0"><span className="block truncate font-bold">⌾ {reserva.origem}</span><span className="mt-1 block truncate pl-4 text-[8px] font-medium">→ {reserva.destino}</span></div>
+              <div className="border-l border-slate-200 pl-2.5"><span className="block text-slate-400">Horário</span><strong className="mt-1 block text-[11px]">{reserva.horario}</strong><span className="block text-[8px] text-slate-400">hoje</span></div>
+              <div className="border-l border-slate-200 pl-2.5"><span className="block text-slate-400">Assento</span><strong className="mt-1 block text-[11px]">—</strong></div>
+              <div className="border-l border-slate-200 pl-2.5"><span className="block text-slate-400">Passageiro</span><strong className="mt-1 block text-[11px]">{reserva.passageiros}</strong></div>
             </div>
           </section>
 
-          <section className="mt-5">
-            <h2 className="text-[17px] font-extrabold tracking-tight">Forma de pagamento</h2>
-            <div className="mt-3 space-y-2.5">
+          <section className="mt-4">
+            <h2 className="text-[15px] font-extrabold tracking-tight">Forma de pagamento</h2>
+            <div className="mt-2.5 space-y-2">
               <button onClick={() => { setMetodo("pix"); setErro(null); }} className={optionClass(metodo === "pix")}>
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e9fbf8]"><PixLogo className="size-8" /></div>
-                <div className="min-w-0 flex-1"><p className="text-[15px] font-extrabold">Pix</p><p className="mt-0.5 text-[11px] font-medium text-[#16a085]">Aprovação imediata</p></div>
-                {metodo === "pix" ? <span className="flex size-7 items-center justify-center rounded-full bg-[#159b55] text-white">✓</span> : <ChevronRight className="size-5 text-slate-400" />}
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e9fbf8]"><PixLogo className="size-7" /></div>
+                <div className="min-w-0 flex-1"><p className="text-[14px] font-extrabold">Pix</p><p className="mt-0.5 text-[10px] font-medium text-[#16a085]">Aprovação imediata</p></div>
+                {metodo === "pix" ? <span className="flex size-6 items-center justify-center rounded-full bg-[#159b55] text-[13px] font-bold text-white">✓</span> : <ChevronRight className="size-5 text-slate-400" />}
               </button>
-
               <button onClick={() => { setMetodo("credito"); setErro(null); }} className={optionClass(metodo === "credito")}>
-                <div className="flex w-[82px] shrink-0 items-center justify-start"><CardBrands /></div>
-                <div className="min-w-0 flex-1"><p className="text-[14px] font-extrabold">Cartão de Crédito</p><p className="mt-0.5 text-[11px] text-slate-500">Pague com cartão</p></div>
+                <div className="flex w-[78px] shrink-0 items-center justify-start"><CardBrands /></div>
+                <div className="min-w-0 flex-1"><p className="text-[13px] font-extrabold">Cartão de Crédito</p><p className="mt-0.5 text-[10px] text-slate-500">Pague com cartão</p></div>
                 <ChevronRight className="size-5 shrink-0 text-[#071342]" />
               </button>
-
               <button onClick={() => { setMetodo("debito"); setErro(null); }} className={optionClass(metodo === "debito")}>
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#eaf2ff] text-[#1264d8]"><CreditCard className="size-6" /></div>
-                <div className="min-w-0 flex-1"><p className="text-[14px] font-extrabold">Cartão de Débito</p><p className="mt-0.5 text-[11px] text-slate-500">Pague com cartão</p></div>
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#eaf2ff] text-[#1264d8]"><CreditCard className="size-5" /></div>
+                <div className="min-w-0 flex-1"><p className="text-[13px] font-extrabold">Cartão de Débito</p><p className="mt-0.5 text-[10px] text-slate-500">Pague com cartão</p></div>
                 <ChevronRight className="size-5 shrink-0 text-[#071342]" />
               </button>
             </div>
           </section>
 
           {metodo !== "pix" && (
-            <section className="mt-3 rounded-[22px] border border-slate-100 bg-white p-4 shadow-[0_5px_18px_rgba(2,12,66,0.05)]">
+            <section className="mt-3 rounded-[20px] border border-slate-100 bg-white p-4 shadow-[0_5px_18px_rgba(2,12,66,0.05)]">
               <div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-extrabold">Dados do cartão</h3><CardBrands /></div>
               <div className="space-y-2.5">
                 <input inputMode="numeric" autoComplete="cc-number" placeholder="Número do cartão" value={cartao.numero} onChange={e => setCartao(c => ({ ...c, numero: e.target.value.replace(/\D/g, "").slice(0, 19) }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-[#0b2be3] focus:bg-white" />
@@ -205,23 +197,10 @@ function Pagamentos() {
             </section>
           )}
 
-          {metodo === "pix" && (
-            <div className="mt-3 rounded-[18px] border border-[#32BCAD]/15 bg-[#f1fcfa] px-4 py-3 text-[11px] leading-relaxed text-slate-600">
-              O código Pix será gerado ao tocar em <strong className="text-[#071342]">Pagar agora</strong>.
-            </div>
-          )}
-
+          {metodo === "pix" && <div className="mt-3 rounded-[16px] border border-[#32BCAD]/15 bg-[#f1fcfa] px-4 py-2.5 text-[10px] leading-relaxed text-slate-600">O código Pix será gerado ao tocar em <strong className="text-[#071342]">Pagar agora</strong>.</div>}
           {erro && <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-600 ring-1 ring-red-100">{erro}</p>}
-
-          <div className="mt-4 flex items-center justify-center gap-2 border-t border-slate-100 pt-4 text-[10px] font-medium text-slate-500">
-            <LockKeyhole className="size-4 text-[#071342]" />
-            <span>Seus dados protegidos com criptografia SSL</span>
-          </div>
-
-          <button onClick={pagar} disabled={carregando} className="press mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#0b2be3] text-base font-extrabold text-white shadow-[0_10px_28px_rgba(11,43,227,0.24)]">
-            {carregando ? <Loader2 className="size-5 animate-spin" /> : `Pagar agora · ${brl(valor)}`}
-          </button>
-
+          <div className="mt-4 flex items-center justify-center gap-2 border-t border-slate-100 pt-3 text-[9px] font-medium text-slate-500"><LockKeyhole className="size-4 text-[#071342]" /><span>Seus dados protegidos com criptografia SSL</span></div>
+          <button onClick={pagar} disabled={carregando} className="press mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#0b2be3] text-base font-extrabold text-white shadow-[0_10px_28px_rgba(11,43,227,0.24)]">{carregando ? <Loader2 className="size-5 animate-spin" /> : `Pagar agora · ${brl(valor)}`}</button>
           {pix && <div className="mt-4 rounded-[22px] border border-slate-200 bg-white p-4 shadow-lg"><h2 className="text-sm font-extrabold">PIX copia e cola</h2><button onClick={() => navigator.clipboard?.writeText(pix)} className="mt-3 w-full rounded-xl bg-slate-50 p-3 text-left font-mono text-[10px] break-all text-slate-600 ring-1 ring-slate-200">{pix}</button><button onClick={() => setPix(null)} className="press mt-3 h-11 w-full rounded-xl bg-[#071342] text-sm font-bold text-white">Fechar</button></div>}
         </main>
       </div>
