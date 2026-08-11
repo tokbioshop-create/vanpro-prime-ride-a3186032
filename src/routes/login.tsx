@@ -18,7 +18,9 @@ function LoginPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/painel" });
+      if (!data.session) return;
+      const tipoConta = data.session.user.user_metadata?.tipo_conta;
+      navigate({ to: tipoConta === "empresario" ? "/painel" : "/home", replace: true });
     });
   }, [navigate]);
 
@@ -28,15 +30,21 @@ function LoginPage() {
     if (!senha) return toast.error("Informe sua senha.");
 
     setCarregando(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: emailLimpo, password: senha });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: emailLimpo, password: senha });
     setCarregando(false);
 
     if (error) {
       toast.error("E-mail ou senha incorretos.");
       return;
     }
-    toast.success("Acesso autorizado.");
-    navigate({ to: "/painel" });
+    const tipoConta = data.user?.user_metadata?.tipo_conta;
+    if (tipoConta !== "empresario") {
+      toast.error("Esta área é exclusiva para empresários.");
+      await supabase.auth.signOut();
+      return;
+    }
+    toast.success("Acesso empresarial autorizado.");
+    navigate({ to: "/painel", replace: true });
   }
 
   return (
