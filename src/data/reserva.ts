@@ -31,7 +31,7 @@ function lerObservacao() {
   }
 }
 
-/** Dados reais da reserva, montados a partir do que foi preenchido no app. */
+/** Dados reais da reserva, montados somente a partir do que foi selecionado no carrinho. */
 export function useReserva() {
   const { itens, total } = useCarrinho();
   const { config } = usePainel();
@@ -51,7 +51,6 @@ export function useReserva() {
   const [origemBruta, destinoBruto] = rota.split(/→|->/).map((s) => s.trim());
 
   const primeiro = itens[0];
-  const precoBase = Number(config.agendamento.precoBase.replace(/\./g, "").replace(",", ".")) || 0;
 
   return {
     itens,
@@ -59,13 +58,13 @@ export function useReserva() {
     destino: destinoBruto || "Destino",
     horario: primeiro?.horario ?? config.agendamento.horarios[0]?.saida ?? "--:--",
     assentos: itens.length ? itens.map((i) => i.assento).join(", ") : "—",
-    passageiros: Math.max(itens.length, 1),
-    veiculo: primeiro?.veiculo ?? config.agendamento.veiculos[0] ?? "Van executiva",
+    passageiros: itens.length,
+    veiculo: primeiro?.veiculo ?? "",
     nome: cadastro?.nome?.trim() || "Passageiro não identificado",
     observacao: observacao || "Sem observações",
     data: hoje ? `Hoje, ${hoje}` : "Hoje",
-    subtotal: total || precoBase,
+    subtotal: total,
     taxa: 0,
-    total: total || precoBase,
+    total,
   };
 }
