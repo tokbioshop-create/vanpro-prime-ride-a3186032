@@ -53,22 +53,37 @@ function AuthGate() {
   const [checking, setChecking] = useState(true);
   const publicPaths = ["/", "/login", "/cadastro"];
   const isPublic = publicPaths.includes(location.pathname);
+  const isPanel = location.pathname === "/painel" || location.pathname.startsWith("/painel/");
 
   useEffect(() => {
     if (isPublic) { setChecking(false); return; }
     let ativo = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!ativo) return;
-      if (!data.session) navigate({ to: "/login", replace: true });
-      else setChecking(false);
+      if (!data.session) {
+        navigate({ to: "/login", replace: true });
+        return;
+      }
+      const tipoConta = data.session.user.user_metadata?.tipo_conta;
+      if (isPanel && tipoConta !== "empresario") {
+        navigate({ to: "/home", replace: true });
+        return;
+      }
+      setChecking(false);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session && !publicPaths.includes(window.location.pathname)) navigate({ to: "/login", replace: true });
+      if (!session && !publicPaths.includes(window.location.pathname)) {
+        navigate({ to: "/login", replace: true });
+        return;
+      }
+      if (session && (window.location.pathname === "/painel" || window.location.pathname.startsWith("/painel/")) && session.user.user_metadata?.tipo_conta !== "empresario") {
+        navigate({ to: "/home", replace: true });
+      }
     });
     return () => { ativo = false; listener.subscription.unsubscribe(); };
-  }, [isPublic, navigate, location.pathname]);
+  }, [isPublic, isPanel, navigate, location.pathname]);
 
-  if (!isPublic && checking) return <div className="bg-deep flex min-h-screen items-center justify-center text-sm text-muted-foreground">Verificando acesso...</div>;
+  if (!isPublic && checking) return <div className="bg-deep flex min-h-screen items-center justify-center text-sm text-muted-foreground">Verificando acesso empresarial...</div>;
   return <Outlet />;
 }
 
