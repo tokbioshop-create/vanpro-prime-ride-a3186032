@@ -64,8 +64,8 @@ function Pagamentos() {
 
   return <div className="min-h-screen bg-[#f5f6f8] text-[#071342]"><div className="mx-auto min-h-screen w-full max-w-md bg-white pb-8 shadow-[0_0_35px_rgba(15,23,42,0.05)]">
     <main className="relative">
-      <div className="relative">
-        <img src="/checkout-banner.svg" alt="Sua viagem, seu conforto. Finalize seu pagamento com segurança." className="block h-[210px] w-full object-cover" />
+      <div className="relative overflow-hidden rounded-b-[22px]">
+        <img src="/checkout-banner.svg" alt="Sua viagem, seu conforto. Finalize seu pagamento com segurança." className="block w-full h-auto object-contain" />
         <button onClick={() => navigate({ to: "/carrinho" })} aria-label="Voltar ao carrinho" className="absolute left-3 top-3 z-20 flex size-9 items-center justify-center rounded-full bg-[#071342]/75 text-white shadow-lg backdrop-blur-sm"><ArrowLeft className="size-[19px]"/></button>
       </div>
       <div className="px-4 pt-5">
